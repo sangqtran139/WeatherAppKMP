@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,12 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.WbTwilight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -33,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,23 +77,24 @@ fun AstronomyScreen(
     onRetry: () -> Unit
 ) {
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF1A237E), Color(0xFF311B92), Color(0xFF4527A0))
+        colors = listOf(Color(0xFF0B1026), Color(0xFF1A1B3A), Color(0xFF2D1B4E))
     )
-    Column(
-        modifier = Modifier.fillMaxSize().background(gradient)
-    ) {
-        TopBar(onBackClick = onBackClick)
-        DateSelector(date = date, onPrev = onPreviousDay, onNext = onNextDay)
-        Spacer(modifier = Modifier.height(16.dp))
+    Box(modifier = Modifier.fillMaxSize().background(gradient)) {
+        StarrySky(modifier = Modifier.fillMaxSize())
+        Column(modifier = Modifier.fillMaxSize()) {
+            TopBar(onBackClick = onBackClick)
+            DateSelector(date = date, onPrev = onPreviousDay, onNext = onNextDay)
+            Spacer(modifier = Modifier.height(8.dp))
 
-        when (val s = state) {
-            Resource.Loading -> LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-                color = Color.White,
-                trackColor = Color.White.copy(alpha = 0.2f)
-            )
-            is Resource.Error -> WeatherErrorScreen(message = s.message, onRetry = { onRetry() })
-            is Resource.Success -> AstronomyContent(detail = s.data)
+            when (val s = state) {
+                Resource.Loading -> LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    color = Color.White,
+                    trackColor = Color.White.copy(alpha = 0.2f)
+                )
+                is Resource.Error -> WeatherErrorScreen(message = s.message, onRetry = { onRetry() })
+                is Resource.Success -> AstronomyContent(detail = s.data)
+            }
         }
     }
 }
@@ -139,19 +142,80 @@ private fun DateSelector(date: String, onPrev: () -> Unit, onNext: () -> Unit) {
 @Composable
 private fun AstronomyContent(detail: AstronomyDetail) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "${detail.locationName}, ${detail.country}",
             color = Color.White.copy(alpha = 0.85f),
-            fontSize = 14.sp
+            fontSize = 13.sp
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        MoonHero(detail = detail)
+
         Spacer(modifier = Modifier.height(20.dp))
 
-        SunCard(detail = detail)
+        MoonStatsCard(detail = detail)
+
         Spacer(modifier = Modifier.height(16.dp))
-        MoonCard(detail = detail)
+
+        SunCard(detail = detail)
+
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Composable
+private fun MoonHero(detail: AstronomyDetail) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1.1f),
+        contentAlignment = Alignment.Center
+    ) {
+        MoonIllustration(
+            phaseName = detail.moonPhase,
+            illumination = detail.moonIllumination,
+            modifier = Modifier.fillMaxSize()
+        )
+        Column(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = detail.moonPhase.ifBlank { "—" },
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight(700)
+            )
+            Text(
+                text = "${detail.moonIllumination}% illuminated",
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 13.sp
+            )
+            if (detail.isMoonUp) {
+                Spacer(modifier = Modifier.height(8.dp))
+                StatusChip("Moon is up now", Color(0xFFB39DDB))
+            }
+        }
+    }
+}
+
+@Composable
+private fun MoonStatsCard(detail: AstronomyDetail) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color.White.copy(alpha = 0.08f))
+            .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        TimeBlock("Moonrise", detail.moonrise)
+        VerticalDivider()
+        TimeBlock("Moonset", detail.moonset)
     }
 }
 
@@ -161,72 +225,52 @@ private fun SunCard(detail: AstronomyDetail) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .background(Color.White.copy(alpha = 0.1f))
+            .background(Color.White.copy(alpha = 0.08f))
             .padding(20.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.WbSunny, null, tint = Color(0xFFFFD54F), modifier = Modifier.size(28.dp))
+            Icon(Icons.Default.WbSunny, null, tint = Color(0xFFFFD54F), modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(10.dp))
-            Text("Sun", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(700))
+            Text("Sun", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
+            if (detail.isSunUp) {
+                Spacer(modifier = Modifier.width(10.dp))
+                StatusChip("Up", Color(0xFFFFD54F))
+            }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            TimeBlock("Sunrise", detail.sunrise)
-            TimeBlock("Sunset", detail.sunset)
-        }
-        if (detail.isSunUp) {
-            Spacer(modifier = Modifier.height(12.dp))
-            StatusChip("Sun is up", Color(0xFFFFD54F))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            TimeBlock("Sunrise", detail.sunrise, icon = Icons.Default.WbTwilight, tint = Color(0xFFFFB74D))
+            VerticalDivider()
+            TimeBlock("Sunset", detail.sunset, icon = Icons.Default.WbTwilight, tint = Color(0xFFFF7043))
         }
     }
 }
 
 @Composable
-private fun MoonCard(detail: AstronomyDetail) {
-    Column(
+private fun VerticalDivider() {
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White.copy(alpha = 0.1f))
-            .padding(20.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.NightsStay, null, tint = Color(0xFFB39DDB), modifier = Modifier.size(28.dp))
-            Spacer(modifier = Modifier.width(10.dp))
-            Text("Moon", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(700))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            TimeBlock("Moonrise", detail.moonrise)
-            TimeBlock("Moonset", detail.moonset)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            InfoBlock("Phase", detail.moonPhase)
-            InfoBlock("Illumination", "${detail.moonIllumination}%")
-        }
-        if (detail.isMoonUp) {
-            Spacer(modifier = Modifier.height(12.dp))
-            StatusChip("Moon is up", Color(0xFFB39DDB))
-        }
-    }
+            .width(1.dp)
+            .height(40.dp)
+            .background(Color.White.copy(alpha = 0.2f))
+    )
 }
 
 @Composable
-private fun TimeBlock(label: String, time: String) {
+private fun TimeBlock(
+    label: String,
+    time: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
+    tint: Color = Color.White
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        if (icon != null) {
+            Icon(icon, null, tint = tint, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+        }
         Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(time.ifBlank { "—" }, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight(700))
-    }
-}
-
-@Composable
-private fun InfoBlock(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(value.ifBlank { "—" }, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(600), textAlign = TextAlign.Center)
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(time.ifBlank { "—" }, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(700))
     }
 }
 

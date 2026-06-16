@@ -62,7 +62,13 @@
       "Bash(./gradlew :shared:dependencies --configuration commonMainImplementationDependenciesMetadata)",
       "Bash(./gradlew :shared:dependencies)",
       "Bash(curl -s \"https://repo1.maven.org/maven2/io/insert-koin/koin-core/maven-metadata.xml\")",
-      "Bash(./gradlew :shared:compileAndroidMain :shared:compileKotlinIosSimulatorArm64)"
+      "Bash(./gradlew :shared:compileAndroidMain :shared:compileKotlinIosSimulatorArm64)",
+      "Bash(./gradlew :shared:tasks --all)",
+      "Bash(curl -s -X GET https://weatherapi-com.p.rapidapi.com/sports.json?q=global -H 'x-rapidapi-key: a18ff6abb6msh87e4bad56fec7c9p120bb4jsn1caccf7c55b2' -H 'x-rapidapi-host: weatherapi-com.p.rapidapi.com')",
+      "Bash(curl -s -X GET 'https://weatherapi-com.p.rapidapi.com/marine.json?q=Vietnam&days=3' -H 'x-rapidapi-key: a18ff6abb6msh87e4bad56fec7c9p120bb4jsn1caccf7c55b2' -H 'x-rapidapi-host: weatherapi-com.p.rapidapi.com')",
+      "Bash(curl -s -X GET 'https://weatherapi-com.p.rapidapi.com/history.json?q=London&dt=2024-06-16' -H 'x-rapidapi-key: a18ff6abb6msh87e4bad56fec7c9p120bb4jsn1caccf7c55b2' -H 'x-rapidapi-host: weatherapi-com.p.rapidapi.com')",
+      "Bash(curl -s -X GET 'https://weatherapi-com.p.rapidapi.com/astronomy.json?q=London&dt=2025-06-16' -H 'x-rapidapi-key: a18ff6abb6msh87e4bad56fec7c9p120bb4jsn1caccf7c55b2' -H 'x-rapidapi-host: weatherapi-com.p.rapidapi.com')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('has alerts:', 'alerts' in d, '| count:', len\\(d.get\\('alerts',{}\\).get\\('alert',[]\\)\\)\\)\")"
     ]
   }
 }

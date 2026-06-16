@@ -47,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		20A7F10CA2CD23D37CAAE58E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6E3BFFA38489DD21CC6F8BFD /* WeatherAppKMP.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C3036DEF1722F3CA4CFE0D02 = {
 			isa = PBXGroup;
 			children = (
@@ -54,14 +62,6 @@
 				00652B02E9A073A6C3C47F59 /* iosApp */,
 				20A7F10CA2CD23D37CAAE58E /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		20A7F10CA2CD23D37CAAE58E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				6E3BFFA38489DD21CC6F8BFD /* WeatherAppKMP.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -299,7 +299,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				DEVELOPMENT_TEAM = 546634Q4J4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
@@ -327,7 +327,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				DEVELOPMENT_TEAM = 546634Q4J4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
