@@ -3,7 +3,19 @@ package com.sangtq.weatherappkmp.domain.model
 data class WeatherData(
     val location: WeatherLocation,
     val current: CurrentWeather,
-    val forecastDays: List<ForecastDay>
+    val forecastDays: List<ForecastDay>,
+    val alerts: List<WeatherAlert> = emptyList()
+)
+
+data class WeatherAlert(
+    val headline: String,
+    val event: String,
+    val severity: String,
+    val areas: String,
+    val effective: String,
+    val expires: String,
+    val description: String,
+    val instruction: String
 )
 
 data class WeatherLocation(

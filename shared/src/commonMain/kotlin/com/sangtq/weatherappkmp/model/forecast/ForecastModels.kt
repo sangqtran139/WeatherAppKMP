@@ -7,7 +7,30 @@ import kotlinx.serialization.Serializable
 data class ForecastWeatherDto(
     val current: Current? = null,
     val forecast: ForecastX? = null,
-    val location: Location? = null
+    val location: Location? = null,
+    val alerts: AlertsContainer? = null
+)
+
+@Serializable
+data class AlertsContainer(
+    val alert: List<AlertDto> = emptyList()
+)
+
+@Serializable
+data class AlertDto(
+    val headline: String = "",
+    val msgtype: String = "",
+    val severity: String = "",
+    val urgency: String = "",
+    val areas: String = "",
+    val category: String = "",
+    val certainty: String = "",
+    val event: String = "",
+    val note: String = "",
+    val effective: String = "",
+    val expires: String = "",
+    val desc: String = "",
+    val instruction: String = ""
 )
 
 @Serializable

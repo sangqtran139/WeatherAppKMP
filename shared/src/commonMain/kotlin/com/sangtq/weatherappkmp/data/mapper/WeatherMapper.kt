@@ -5,9 +5,11 @@ import com.sangtq.weatherappkmp.domain.model.CurrentWeather
 import com.sangtq.weatherappkmp.domain.model.DaySummary
 import com.sangtq.weatherappkmp.domain.model.ForecastDay
 import com.sangtq.weatherappkmp.domain.model.HourWeather
+import com.sangtq.weatherappkmp.domain.model.WeatherAlert
 import com.sangtq.weatherappkmp.domain.model.WeatherCondition
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.domain.model.WeatherLocation
+import com.sangtq.weatherappkmp.model.forecast.AlertDto
 import com.sangtq.weatherappkmp.model.forecast.Astro
 import com.sangtq.weatherappkmp.model.forecast.Condition
 import com.sangtq.weatherappkmp.model.forecast.Current
@@ -22,7 +24,19 @@ private val emptyCondition = WeatherCondition("", "", 0)
 fun ForecastWeatherDto.toDomain() = WeatherData(
     location = location?.toDomain() ?: WeatherLocation("", "", "", "", 0L, 0.0, 0.0, ""),
     current = current?.toDomain() ?: CurrentWeather(0.0, 0.0, emptyCondition, 0, 0.0, "", 0.0, 0.0, 0.0, 0.0, false, 0.0),
-    forecastDays = forecast?.forecastday?.map { it.toDomain() } ?: emptyList()
+    forecastDays = forecast?.forecastday?.map { it.toDomain() } ?: emptyList(),
+    alerts = alerts?.alert?.map { it.toDomain() } ?: emptyList()
+)
+
+fun AlertDto.toDomain() = WeatherAlert(
+    headline = headline,
+    event = event,
+    severity = severity,
+    areas = areas,
+    effective = effective,
+    expires = expires,
+    description = desc,
+    instruction = instruction
 )
 
 fun Location.toDomain() = WeatherLocation(

@@ -17,7 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangtq.weatherappkmp.domain.model.FavoriteCity
 import com.sangtq.weatherappkmp.domain.model.SearchLocation
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
@@ -55,15 +59,26 @@ fun SearchRoute(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResults: Resource<List<SearchLocation>> by viewModel.searchResults.collectAsStateWithLifecycle()
     val currentWeather: WeatherData? by viewModel.currentWeather.collectAsStateWithLifecycle()
+    val timezones: Map<Int, String> by viewModel.timezones.collectAsStateWithLifecycle()
+    val favorites by viewModel.favorites.collectAsStateWithLifecycle()
+    val recent by viewModel.recent.collectAsStateWithLifecycle()
 
     SearchScreen(
         modifier = modifier,
         searchQuery = searchQuery,
         searchResults = searchResults,
         currentWeather = currentWeather,
+        timezones = timezones,
+        favorites = favorites,
+        recent = recent,
         onQueryChange = viewModel::onQueryChange,
         onBackClick = onBackClick,
-        onSelectLocation = onSelectLocation
+        onSelectLocation = { query ->
+            viewModel.recordSelection(query)
+            onSelectLocation(query)
+        },
+        onRemoveFavorite = viewModel::removeFavorite,
+        onClearRecent = viewModel::clearRecent
     )
 }
 
@@ -73,9 +88,14 @@ fun SearchScreen(
     searchQuery: String,
     searchResults: Resource<List<SearchLocation>>,
     currentWeather: WeatherData?,
+    timezones: Map<Int, String> = emptyMap(),
+    favorites: List<FavoriteCity> = emptyList(),
+    recent: List<String> = emptyList(),
     onQueryChange: (String) -> Unit,
     onBackClick: () -> Unit,
-    onSelectLocation: (String) -> Unit
+    onSelectLocation: (String) -> Unit,
+    onRemoveFavorite: (FavoriteCity) -> Unit = {},
+    onClearRecent: () -> Unit = {}
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
@@ -136,6 +156,52 @@ fun SearchScreen(
             CurrentLocationItem(weather = currentWeather)
         }
 
+        if (searchQuery.isEmpty()) {
+            if (favorites.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                SectionHeader(title = "Favorites")
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White)
+                ) {
+                    favorites.forEachIndexed { index, fav ->
+                        FavoriteRow(city = fav, onClick = { onSelectLocation(fav.query) }, onRemove = { onRemoveFavorite(fav) })
+                        if (index < favorites.size - 1) {
+                            HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0), modifier = Modifier.padding(horizontal = 16.dp))
+                        }
+                    }
+                }
+            }
+            if (recent.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    SectionHeader(title = "Recent searches", modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Clear",
+                        color = Color(0xFF2F80ED),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight(600),
+                        modifier = Modifier.clickable(onClick = onClearRecent).padding(end = 8.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White)
+                ) {
+                    recent.forEachIndexed { index, q ->
+                        RecentRow(query = q, onClick = { onSelectLocation(q) })
+                        if (index < recent.size - 1) {
+                            HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0), modifier = Modifier.padding(horizontal = 16.dp))
+                        }
+                    }
+                }
+            }
+        }
+
         if (searchQuery.isNotEmpty()) {
             Spacer(modifier = Modifier.height(20.dp))
             when (searchResults) {
@@ -174,6 +240,7 @@ fun SearchScreen(
                             items(locations.size) { index ->
                                 SearchResultItem(
                                     location = locations[index],
+                                    localTime = timezones[locations[index].id],
                                     onClick = { onSelectLocation(locations[index].name) }
                                 )
                                 if (index < locations.size - 1) {
@@ -216,8 +283,52 @@ private fun CurrentLocationItem(weather: WeatherData) {
 }
 
 @Composable
+private fun SectionHeader(title: String, modifier: Modifier = Modifier) {
+    Text(
+        text = title,
+        color = Color(0xFF828282),
+        fontSize = 12.sp,
+        fontWeight = FontWeight(500),
+        modifier = modifier.padding(start = 4.dp, bottom = 8.dp)
+    )
+}
+
+@Composable
+private fun FavoriteRow(city: FavoriteCity, onClick: () -> Unit, onRemove: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(Icons.Default.Star, null, tint = Color(0xFFF2C94C), modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(city.name, color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
+            if (city.country.isNotEmpty()) {
+                Text(city.country, color = Color(0xFF828282), fontSize = 12.sp)
+            }
+        }
+        Box(modifier = Modifier.clickable(onClick = onRemove).padding(6.dp)) {
+            Icon(Icons.Default.Close, null, tint = Color(0xFF828282), modifier = Modifier.size(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun RecentRow(query: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(Icons.Default.History, null, tint = Color(0xFF828282), modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(query, color = Color(0xFF333333), fontSize = 14.sp)
+    }
+}
+
+@Composable
 private fun SearchResultItem(
     location: SearchLocation,
+    localTime: String?,
     onClick: () -> Unit
 ) {
     Row(
@@ -234,7 +345,7 @@ private fun SearchResultItem(
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = location.name,
                 color = Color(0xFF333333),
@@ -247,6 +358,14 @@ private fun SearchResultItem(
                     text = subtitle,
                     color = Color(0xFF828282),
                     fontSize = 12.sp
+                )
+            }
+            if (!localTime.isNullOrEmpty()) {
+                Text(
+                    text = localTime,
+                    color = Color(0xFF2F80ED),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight(500)
                 )
             }
         }

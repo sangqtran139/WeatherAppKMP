@@ -32,7 +32,10 @@ import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Opacity
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.HorizontalDivider
@@ -58,12 +61,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sangtq.weatherappkmp.Screen
 import com.sangtq.weatherappkmp.domain.model.ForecastDay
 import com.sangtq.weatherappkmp.domain.model.HourWeather
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.model.NoteDetailWeather
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
 import com.sangtq.weatherappkmp.ui.components.AnimatedShimmer
+import com.sangtq.weatherappkmp.ui.components.FeatureMenuBottomSheet
+import com.sangtq.weatherappkmp.ui.components.WeatherAlertBanner
 import com.sangtq.weatherappkmp.ui.components.WeatherErrorScreen
 import com.sangtq.weatherappkmp.ui.components.WeatherIcon
 import com.sangtq.weatherappkmp.ui.components.WeatherInfoBottomSheet
@@ -81,32 +87,34 @@ import kotlin.math.roundToInt
 fun WeatherHomeRoute(
     modifier: Modifier = Modifier,
     location: String = "Vietnam",
+    permissionHandled: Boolean = false,
+    onPermissionHandled: () -> Unit = {},
     onLocationDetected: (String) -> Unit = {},
     viewModel: WeatherHomeViewModel = koinViewModel(),
     openWeatherDetail: (() -> Unit)? = null,
-    openSearch: (() -> Unit)? = null
+    openSearch: (() -> Unit)? = null,
+    openFeature: (Screen) -> Unit = {}
 ) {
-    // Permission request on first launch — then detect device location
-    var permissionHandled by remember { mutableStateOf(false) }
     if (!permissionHandled) {
         RequestLocationPermission(
             onGranted = {
-                permissionHandled = true
+                onPermissionHandled()
                 viewModel.detectAndLoadWeather(fallback = location, onLocationDetected = onLocationDetected)
             },
             onDenied = {
-                permissionHandled = true
+                onPermissionHandled()
                 viewModel.loadWeather(location)
             }
         )
     }
 
-    // Reload when location changes from search (only after initial permission flow is done)
+    // Reload when location changes (e.g. user picked a city from search).
     LaunchedEffect(location) {
         if (permissionHandled) viewModel.loadWeather(location)
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isFavorite by viewModel.isCurrentFavorite.collectAsStateWithLifecycle()
 
     var weatherData by remember { mutableStateOf<WeatherData?>(null) }
 
@@ -123,6 +131,7 @@ fun WeatherHomeRoute(
     val backgroundColors = weatherBackgroundColors(hourNow.intValue)
     var showBottomSheet by remember { mutableStateOf(false) }
     var noteTypeForBottomSheet by remember { mutableStateOf("") }
+    var showFeatureMenu by remember { mutableStateOf(false) }
     val currentTime = remember { mutableStateOf(getCurrentTime()) }
 
     LaunchedEffect(Unit) {
@@ -150,19 +159,55 @@ fun WeatherHomeRoute(
         ) {
             item {
                 Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White)
-                        .clickable { openSearch?.invoke() }
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(Icons.Default.LocationOn, null, tint = Color(0xFF2F80ED), modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "${data.location.name}, ${data.location.country}",
-                        color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight(500)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color.White)
+                            .clickable { openSearch?.invoke() }
+                            .padding(horizontal = 20.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.LocationOn, null, tint = Color(0xFF2F80ED), modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${data.location.name}, ${data.location.country}",
+                            color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight(500)
+                        )
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color.White)
+                                .clickable { viewModel.toggleFavorite() }
+                                .padding(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
+                                contentDescription = if (isFavorite) "Remove favorite" else "Add favorite",
+                                tint = if (isFavorite) Color(0xFFF2C94C) else Color(0xFF2F80ED),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color.White)
+                                .clickable { showFeatureMenu = true }
+                                .padding(10.dp)
+                        ) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More features", tint = Color(0xFF2F80ED), modifier = Modifier.size(20.dp))
+                        }
+                    }
+                }
+                if (data.alerts.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    WeatherAlertBanner(alerts = data.alerts)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Column(
@@ -226,6 +271,13 @@ fun WeatherHomeRoute(
 
     if (showBottomSheet) {
         WeatherInfoBottomSheet(noteType = noteTypeForBottomSheet, onDismiss = { showBottomSheet = false })
+    }
+
+    if (showFeatureMenu) {
+        FeatureMenuBottomSheet(
+            onDismiss = { showFeatureMenu = false },
+            onSelect = openFeature
+        )
     }
 }
 
