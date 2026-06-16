@@ -12,6 +12,7 @@ import com.sangtq.weatherappkmp.model.marine.MarineTideEntryDto
 fun MarineResponseDto.toDomain() = MarineForecast(
     locationName = location?.name.orEmpty(),
     country = location?.country.orEmpty(),
+    timezoneId = location?.tzId.orEmpty(),
     days = forecast?.forecastday?.map { it.toDomain() } ?: emptyList()
 )
 

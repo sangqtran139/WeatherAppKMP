@@ -142,7 +142,7 @@ fun WeatherHomeRoute(
     }
 
     LaunchedEffect(data) {
-        hourNow.intValue = convertEpochToHour(data.location.localtimeEpoch)
+        hourNow.intValue = convertEpochToHour(data.location.localtimeEpoch, data.location.timezoneId)
         listHourState.animateScrollToItem(
             if (hourNow.intValue > 6) hourNow.intValue - 2 else hourNow.intValue
         )
@@ -160,24 +160,30 @@ fun WeatherHomeRoute(
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
                         modifier = Modifier
+                            .weight(1f)
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color.White)
                             .clickable { openSearch?.invoke() }
-                            .padding(horizontal = 20.dp, vertical = 10.dp),
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(Icons.Default.LocationOn, null, tint = Color(0xFF2F80ED), modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "${data.location.name}, ${data.location.country}",
-                            color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight(500)
+                            color = Color.Black,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight(500),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
@@ -239,9 +245,10 @@ fun WeatherHomeRoute(
                         contentPaddingValues = PaddingValues(start = 12.dp, top = 8.dp, bottom = 14.dp, end = 12.dp),
                         spaceBy = Arrangement.spacedBy(8.dp),
                         forecastDay = firstDay,
+                        timezoneId = data.location.timezoneId,
                         state = listHourState,
                         hourNow = hourNow.intValue,
-                        onClickChooseHour = { hourNow.intValue = convertEpochToHour(it.timeEpoch) }
+                        onClickChooseHour = { hourNow.intValue = convertEpochToHour(it.timeEpoch, data.location.timezoneId) }
                     )
                     HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0))
                     Row(
@@ -322,6 +329,7 @@ fun HourWeatherLazyList(
     contentPaddingValues: PaddingValues,
     spaceBy: Arrangement.Horizontal,
     hourNow: Int,
+    timezoneId: String = "",
     onClickChooseHour: (HourWeather) -> Unit
 ) {
     LazyRow(
@@ -333,6 +341,7 @@ fun HourWeatherLazyList(
             HourlyWeatherItem(
                 modifier = Modifier.clickable { onClickChooseHour(forecastDay.hours[index]) },
                 hour = forecastDay.hours[index],
+                timezoneId = timezoneId,
                 isCurrentHour = index == hourNow
             )
         }
@@ -340,7 +349,7 @@ fun HourWeatherLazyList(
 }
 
 @Composable
-fun HourlyWeatherItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHour: Boolean) {
+fun HourlyWeatherItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHour: Boolean, timezoneId: String = "") {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         if (isCurrentHour) {
             Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(Color(0xFFEB5757)))
@@ -348,7 +357,7 @@ fun HourlyWeatherItem(modifier: Modifier = Modifier, hour: HourWeather, isCurren
             Spacer(modifier = Modifier.height(6.dp))
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "${convertEpochToHour(hour.timeEpoch)}:00", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight(450))
+        Text(text = "${convertEpochToHour(hour.timeEpoch, timezoneId)}:00", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight(450))
         Spacer(modifier = Modifier.height(4.dp))
         WeatherIcon(iconUrl = hour.condition.icon, modifier = Modifier.padding(horizontal = 13.dp).size(32.dp))
         Spacer(modifier = Modifier.height(4.dp))

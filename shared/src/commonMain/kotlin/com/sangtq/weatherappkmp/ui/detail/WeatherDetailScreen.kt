@@ -102,7 +102,7 @@ fun WeatherDetailRoute(
     var noteTypeForBottomSheet by remember { mutableStateOf("") }
 
     LaunchedEffect(weatherData) {
-        hourNow.intValue = convertEpochToHour(weatherData.location.localtimeEpoch)
+        hourNow.intValue = convertEpochToHour(weatherData.location.localtimeEpoch, weatherData.location.timezoneId)
         listHourState.animateScrollToItem(
             if (hourNow.intValue > 6) hourNow.intValue - 2 else hourNow.intValue
         )
@@ -197,7 +197,8 @@ fun WeatherDetailRoute(
                         state = listHourState,
                         forecastDay = firstDay!!,
                         hourNow = hourNow.intValue,
-                        onClickChooseHour = { hourNow.intValue = convertEpochToHour(it.timeEpoch) }
+                        timezoneId = weatherData.location.timezoneId,
+                        onClickChooseHour = { hourNow.intValue = convertEpochToHour(it.timeEpoch, weatherData.location.timezoneId) }
                     )
                 }
             }
@@ -494,6 +495,7 @@ fun DetailHourWeatherList(
     state: LazyListState,
     forecastDay: ForecastDay,
     hourNow: Int,
+    timezoneId: String = "",
     onClickChooseHour: (HourWeather) -> Unit
 ) {
     val hours = forecastDay.hours
@@ -506,14 +508,15 @@ fun DetailHourWeatherList(
             DetailHourItem(
                 modifier = Modifier.clickable { onClickChooseHour(hours[index]) },
                 hour = hours[index],
-                isCurrentHour = index == hourNow
+                isCurrentHour = index == hourNow,
+                timezoneId = timezoneId
             )
         }
     }
 }
 
 @Composable
-fun DetailHourItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHour: Boolean) {
+fun DetailHourItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHour: Boolean, timezoneId: String = "") {
     val bgColor = if (isCurrentHour) Color.White.copy(alpha = 0.3f) else Color.Transparent
     Column(
         modifier = modifier
@@ -528,7 +531,7 @@ fun DetailHourItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHo
         } else {
             Spacer(modifier = Modifier.height(7.dp))
         }
-        Text(text = "${convertEpochToHour(hour.timeEpoch)}:00", color = Color.White, fontSize = 12.sp)
+        Text(text = "${convertEpochToHour(hour.timeEpoch, timezoneId)}:00", color = Color.White, fontSize = 12.sp)
         Spacer(modifier = Modifier.height(4.dp))
         WeatherIcon(iconUrl = hour.condition?.icon ?: "", modifier = Modifier.size(28.dp))
         Spacer(modifier = Modifier.height(4.dp))

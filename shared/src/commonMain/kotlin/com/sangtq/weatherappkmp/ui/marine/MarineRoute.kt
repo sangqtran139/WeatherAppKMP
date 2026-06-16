@@ -128,7 +128,7 @@ private fun MarineContent(forecast: MarineForecast, selectedDay: Int, onSelectDa
         if (day != null) {
             item { SummaryCard(day) }
             if (day.tides.isNotEmpty()) item { TidesCard(day.tides) }
-            if (day.hours.isNotEmpty()) item { HourlyCard(day.hours) }
+            if (day.hours.isNotEmpty()) item { HourlyCard(day.hours, forecast.timezoneId) }
         }
     }
 }
@@ -209,7 +209,7 @@ private fun TidesCard(tides: List<MarineTide>) {
 }
 
 @Composable
-private fun HourlyCard(hours: List<MarineHour>) {
+private fun HourlyCard(hours: List<MarineHour>, timezoneId: String) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -226,14 +226,14 @@ private fun HourlyCard(hours: List<MarineHour>) {
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(hours.filterIndexed { idx, _ -> idx % 2 == 0 }) { hour ->
-                MarineHourItem(hour)
+                MarineHourItem(hour, timezoneId)
             }
         }
     }
 }
 
 @Composable
-private fun MarineHourItem(hour: MarineHour) {
+private fun MarineHourItem(hour: MarineHour, timezoneId: String) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(14.dp))
@@ -241,7 +241,7 @@ private fun MarineHourItem(hour: MarineHour) {
             .padding(horizontal = 12.dp, vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("${convertEpochToHour(hour.timeEpoch)}:00", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight(600))
+        Text("${convertEpochToHour(hour.timeEpoch, timezoneId)}:00", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight(600))
         Spacer(modifier = Modifier.height(4.dp))
         Text("${hour.swellHtMeters} m", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight(700))
         Text(hour.swellDir, color = Color.White.copy(alpha = 0.7f), fontSize = 10.sp)

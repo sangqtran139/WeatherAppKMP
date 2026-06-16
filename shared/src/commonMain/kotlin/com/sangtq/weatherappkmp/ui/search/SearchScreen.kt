@@ -112,7 +112,7 @@ fun SearchScreen(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
-                .padding(end = 12.dp),
+                .padding(end = 12.dp, top = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {
@@ -145,7 +145,7 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Lokasi sekarang",
+            text = "Search for a location to view its weather forecast. You can also manage your favorite locations and view recent searches.",
             color = Color(0xFF828282),
             fontSize = 12.sp,
             fontWeight = FontWeight(500),

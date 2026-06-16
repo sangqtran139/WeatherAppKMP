@@ -3,6 +3,7 @@ package com.sangtq.weatherappkmp.domain.model
 data class MarineForecast(
     val locationName: String,
     val country: String,
+    val timezoneId: String,
     val days: List<MarineDay>
 )
 

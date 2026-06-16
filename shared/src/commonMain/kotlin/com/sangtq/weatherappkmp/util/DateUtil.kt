@@ -15,10 +15,11 @@ fun convertEpochToLocalDate(epoch: Long): String {
     return "$day, ${localDateTime.dayOfMonth} $month"
 }
 
-fun convertEpochToHour(epoch: Long): Int {
+fun convertEpochToHour(epoch: Long, tzId: String = ""): Int {
+    val tz = if (tzId.isBlank()) TimeZone.currentSystemDefault()
+             else runCatching { TimeZone.of(tzId) }.getOrDefault(TimeZone.currentSystemDefault())
     val instant = Instant.fromEpochSeconds(epoch)
-    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    return localDateTime.hour
+    return instant.toLocalDateTime(tz).hour
 }
 
 fun getCurrentTime(): String {
