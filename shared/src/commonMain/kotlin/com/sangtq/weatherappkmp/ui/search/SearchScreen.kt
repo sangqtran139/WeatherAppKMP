@@ -109,7 +109,7 @@ fun SearchScreen(
         // Search bar
         Row(
             modifier = Modifier
-                .padding(top = 30.dp)
+                .padding(top = 40.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)

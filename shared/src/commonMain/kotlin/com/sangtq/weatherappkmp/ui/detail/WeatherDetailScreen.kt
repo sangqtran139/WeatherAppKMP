@@ -133,7 +133,7 @@ fun WeatherDetailRoute(
             ) {
                 // Back + location pill
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
