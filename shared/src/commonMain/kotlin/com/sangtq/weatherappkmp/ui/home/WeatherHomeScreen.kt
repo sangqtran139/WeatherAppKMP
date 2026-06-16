@@ -99,7 +99,10 @@ fun WeatherHomeRoute(
         RequestLocationPermission(
             onGranted = {
                 onPermissionHandled()
-                viewModel.detectAndLoadWeather(fallback = location, onLocationDetected = onLocationDetected)
+                viewModel.detectAndLoadWeather(
+                    fallback = location,
+                    onLocationDetected = onLocationDetected
+                )
             },
             onDenied = {
                 onPermissionHandled()
@@ -119,8 +122,14 @@ fun WeatherHomeRoute(
     var weatherData by remember { mutableStateOf<WeatherData?>(null) }
 
     when (val state = uiState) {
-        Resource.Loading -> { AnimatedShimmer(); return }
-        is Resource.Error -> { WeatherErrorScreen(message = state.message, onRetry = viewModel::loadWeather); return }
+        Resource.Loading -> {
+            AnimatedShimmer(); return
+        }
+
+        is Resource.Error -> {
+            WeatherErrorScreen(message = state.message, onRetry = viewModel::loadWeather); return
+        }
+
         is Resource.Success -> weatherData = state.data
     }
 
@@ -142,7 +151,8 @@ fun WeatherHomeRoute(
     }
 
     LaunchedEffect(data) {
-        hourNow.intValue = convertEpochToHour(data.location.localtimeEpoch, data.location.timezoneId)
+        hourNow.intValue =
+            convertEpochToHour(data.location.localtimeEpoch, data.location.timezoneId)
         listHourState.animateScrollToItem(
             if (hourNow.intValue > 6) hourNow.intValue - 2 else hourNow.intValue
         )
@@ -159,7 +169,7 @@ fun WeatherHomeRoute(
         ) {
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
@@ -171,7 +181,12 @@ fun WeatherHomeRoute(
                             .padding(horizontal = 16.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.LocationOn, null, tint = Color(0xFF2F80ED), modifier = Modifier.size(20.dp))
+                        Icon(
+                            Icons.Default.LocationOn,
+                            null,
+                            tint = Color(0xFF2F80ED),
+                            modifier = Modifier.size(20.dp)
+                        )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "${data.location.name}, ${data.location.country}",
@@ -207,7 +222,12 @@ fun WeatherHomeRoute(
                                 .clickable { showFeatureMenu = true }
                                 .padding(10.dp)
                         ) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More features", tint = Color(0xFF2F80ED), modifier = Modifier.size(20.dp))
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = "More features",
+                                tint = Color(0xFF2F80ED),
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                     }
                 }
@@ -223,7 +243,12 @@ fun WeatherHomeRoute(
                         .padding(start = 24.dp, bottom = 44.dp)
                 ) {
                     Spacer(modifier = Modifier.height(36.dp))
-                    Text(text = "Today", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight(500))
+                    Text(
+                        text = "Today",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(500)
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = convertEpochToLocalDate(data.location.localtimeEpoch) + " | ${currentTime.value}",
@@ -242,17 +267,26 @@ fun WeatherHomeRoute(
 
                     HourWeatherLazyList(
                         modifier = Modifier,
-                        contentPaddingValues = PaddingValues(start = 12.dp, top = 8.dp, bottom = 14.dp, end = 12.dp),
+                        contentPaddingValues = PaddingValues(
+                            start = 12.dp,
+                            top = 8.dp,
+                            bottom = 14.dp,
+                            end = 12.dp
+                        ),
                         spaceBy = Arrangement.spacedBy(8.dp),
                         forecastDay = firstDay,
                         timezoneId = data.location.timezoneId,
                         state = listHourState,
                         hourNow = hourNow.intValue,
-                        onClickChooseHour = { hourNow.intValue = convertEpochToHour(it.timeEpoch, data.location.timezoneId) }
+                        onClickChooseHour = {
+                            hourNow.intValue =
+                                convertEpochToHour(it.timeEpoch, data.location.timezoneId)
+                        }
                     )
                     HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0))
                     Row(
-                        modifier = Modifier.fillMaxWidth().clickable { openWeatherDetail?.invoke() },
+                        modifier = Modifier.fillMaxWidth()
+                            .clickable { openWeatherDetail?.invoke() },
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -277,7 +311,9 @@ fun WeatherHomeRoute(
     }
 
     if (showBottomSheet) {
-        WeatherInfoBottomSheet(noteType = noteTypeForBottomSheet, onDismiss = { showBottomSheet = false })
+        WeatherInfoBottomSheet(
+            noteType = noteTypeForBottomSheet,
+            onDismiss = { showBottomSheet = false })
     }
 
     if (showFeatureMenu) {
@@ -308,12 +344,14 @@ fun DetailWeatherToday(modifier: Modifier = Modifier, hourNow: Int, weatherData:
             verticalArrangement = Arrangement.Top
         ) {
             WeatherIcon(
-                iconUrl = weatherData.forecastDays.firstOrNull()?.hours?.getOrNull(hourNow)?.condition?.icon ?: "",
+                iconUrl = weatherData.forecastDays.firstOrNull()?.hours?.getOrNull(hourNow)?.condition?.icon
+                    ?: "",
                 modifier = Modifier.size(60.dp)
             )
             Spacer(modifier = Modifier.height(25.dp))
             Text(
-                text = weatherData.forecastDays.firstOrNull()?.hours?.getOrNull(hourNow)?.condition?.text ?: "",
+                text = weatherData.forecastDays.firstOrNull()?.hours?.getOrNull(hourNow)?.condition?.text
+                    ?: "",
                 color = Color.White, fontSize = 14.sp,
                 textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis
             )
@@ -349,7 +387,12 @@ fun HourWeatherLazyList(
 }
 
 @Composable
-fun HourlyWeatherItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHour: Boolean, timezoneId: String = "") {
+fun HourlyWeatherItem(
+    modifier: Modifier = Modifier,
+    hour: HourWeather,
+    isCurrentHour: Boolean,
+    timezoneId: String = ""
+) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         if (isCurrentHour) {
             Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(Color(0xFFEB5757)))
@@ -357,15 +400,31 @@ fun HourlyWeatherItem(modifier: Modifier = Modifier, hour: HourWeather, isCurren
             Spacer(modifier = Modifier.height(6.dp))
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "${convertEpochToHour(hour.timeEpoch, timezoneId)}:00", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight(450))
+        Text(
+            text = "${convertEpochToHour(hour.timeEpoch, timezoneId)}:00",
+            color = Color.Black,
+            fontSize = 12.sp,
+            fontWeight = FontWeight(450)
+        )
         Spacer(modifier = Modifier.height(4.dp))
-        WeatherIcon(iconUrl = hour.condition.icon, modifier = Modifier.padding(horizontal = 13.dp).size(32.dp))
+        WeatherIcon(
+            iconUrl = hour.condition.icon,
+            modifier = Modifier.padding(horizontal = 13.dp).size(32.dp)
+        )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "${hour.tempC.roundToInt()}°C", color = Color.Black, fontSize = 12.sp, fontWeight = FontWeight(450))
+        Text(
+            text = "${hour.tempC.roundToInt()}°C",
+            color = Color.Black,
+            fontSize = 12.sp,
+            fontWeight = FontWeight(450)
+        )
     }
 }
 
-fun LazyListScope.forecastWeatherLazyList(forecastDays: List<ForecastDay>, onClickTips: (String) -> Unit) {
+fun LazyListScope.forecastWeatherLazyList(
+    forecastDays: List<ForecastDay>,
+    onClickTips: (String) -> Unit
+) {
     if (forecastDays.isEmpty()) return
     item {
         Spacer(modifier = Modifier.height(16.dp))
@@ -381,7 +440,10 @@ fun LazyListScope.forecastWeatherLazyList(forecastDays: List<ForecastDay>, onCli
     items(forecastDays.size) { index ->
         WeatherForecastItem(
             modifier = Modifier.background(Color.White).animateContentSize(
-                animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow)
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMediumLow
+                )
             ),
             forecastDay = forecastDays[index],
             onClickTips = onClickTips
@@ -401,7 +463,11 @@ fun LazyListScope.forecastWeatherLazyList(forecastDays: List<ForecastDay>, onCli
 }
 
 @Composable
-fun WeatherForecastItem(modifier: Modifier = Modifier, forecastDay: ForecastDay, onClickTips: (String) -> Unit) {
+fun WeatherForecastItem(
+    modifier: Modifier = Modifier,
+    forecastDay: ForecastDay,
+    onClickTips: (String) -> Unit
+) {
     val isExpanded = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val animateRotation = remember { Animatable(0f) }
@@ -411,7 +477,10 @@ fun WeatherForecastItem(modifier: Modifier = Modifier, forecastDay: ForecastDay,
         coroutineScope.launch { animateRotation.animateTo(if (isExpanded.value) 180f else 0f) }
     }) {
         Spacer(modifier = Modifier.height(18.dp))
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
             Column(modifier = Modifier.weight(1f).padding(start = 24.dp, end = 10.dp)) {
                 Text(
                     text = convertEpochToLocalDate(forecastDay.dateEpoch),
@@ -429,7 +498,8 @@ fun WeatherForecastItem(modifier: Modifier = Modifier, forecastDay: ForecastDay,
             Spacer(modifier = Modifier.width(20.dp))
             Icon(
                 Icons.Default.KeyboardArrowDown, null,
-                modifier = Modifier.clip(RoundedCornerShape(8.dp)).rotate(animateRotation.value).padding(6.dp)
+                modifier = Modifier.clip(RoundedCornerShape(8.dp)).rotate(animateRotation.value)
+                    .padding(6.dp)
             )
             Spacer(modifier = Modifier.width(18.dp))
         }
@@ -437,7 +507,11 @@ fun WeatherForecastItem(modifier: Modifier = Modifier, forecastDay: ForecastDay,
             DetailWeatherForecastForDay(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 20.dp)
-                    .border(width = 1.dp, color = Color(0xFFE0E0E0), shape = RoundedCornerShape(12.dp))
+                    .border(
+                        width = 1.dp,
+                        color = Color(0xFFE0E0E0),
+                        shape = RoundedCornerShape(12.dp)
+                    )
                     .fillMaxWidth().padding(all = 16.dp),
                 forecastDay = forecastDay,
                 onClickTips = onClickTips
@@ -450,26 +524,67 @@ fun WeatherForecastItem(modifier: Modifier = Modifier, forecastDay: ForecastDay,
 }
 
 @Composable
-fun DetailWeatherForecastForDay(modifier: Modifier = Modifier, forecastDay: ForecastDay, onClickTips: (String) -> Unit) {
+fun DetailWeatherForecastForDay(
+    modifier: Modifier = Modifier,
+    forecastDay: ForecastDay,
+    onClickTips: (String) -> Unit
+) {
     Column(modifier = modifier) {
         Row {
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.WaterDrop, null, tint = Color(0xFF4884DA), modifier = Modifier.size(20.dp))
+                    Icon(
+                        Icons.Default.WaterDrop,
+                        null,
+                        tint = Color(0xFF4884DA),
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Precipitation", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(700))
-                    Icon(Icons.Default.Info, null, modifier = Modifier.clickable { onClickTips(NoteDetailWeather.PRECIPITATION.name) }.padding(6.dp).size(16.dp))
+                    Text(
+                        "Precipitation",
+                        color = Color(0xFF333333),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(700)
+                    )
+                    Icon(
+                        Icons.Default.Info,
+                        null,
+                        modifier = Modifier.clickable { onClickTips(NoteDetailWeather.PRECIPITATION.name) }
+                            .padding(6.dp).size(16.dp)
+                    )
                 }
-                Text("${forecastDay.day.dailyChanceOfRain}%", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(500), modifier = Modifier.padding(start = 22.dp))
+                Text(
+                    "${forecastDay.day.dailyChanceOfRain}%",
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(500),
+                    modifier = Modifier.padding(start = 22.dp)
+                )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Air, null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Wind", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(700))
-                    Icon(Icons.Default.Info, null, modifier = Modifier.clickable { onClickTips(NoteDetailWeather.WINDY.name) }.padding(6.dp).size(16.dp))
+                    Text(
+                        "Wind",
+                        color = Color(0xFF333333),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(700)
+                    )
+                    Icon(
+                        Icons.Default.Info,
+                        null,
+                        modifier = Modifier.clickable { onClickTips(NoteDetailWeather.WINDY.name) }
+                            .padding(6.dp).size(16.dp)
+                    )
                 }
-                Text("${forecastDay.day.maxWindKph.roundToInt()} km/h", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(500), modifier = Modifier.padding(start = 22.dp))
+                Text(
+                    "${forecastDay.day.maxWindKph.roundToInt()} km/h",
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(500),
+                    modifier = Modifier.padding(start = 22.dp)
+                )
             }
         }
         Spacer(modifier = Modifier.height(15.dp))
@@ -478,19 +593,56 @@ fun DetailWeatherForecastForDay(modifier: Modifier = Modifier, forecastDay: Fore
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Opacity, null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Humidity", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(700))
-                    Icon(Icons.Default.Info, null, modifier = Modifier.clickable { onClickTips(NoteDetailWeather.HUMIDITY.name) }.padding(6.dp).size(16.dp))
+                    Text(
+                        "Humidity",
+                        color = Color(0xFF333333),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(700)
+                    )
+                    Icon(
+                        Icons.Default.Info,
+                        null,
+                        modifier = Modifier.clickable { onClickTips(NoteDetailWeather.HUMIDITY.name) }
+                            .padding(6.dp).size(16.dp)
+                    )
                 }
-                Text("${forecastDay.day.avgHumidity}%", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(500), modifier = Modifier.padding(start = 22.dp))
+                Text(
+                    "${forecastDay.day.avgHumidity}%",
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(500),
+                    modifier = Modifier.padding(start = 22.dp)
+                )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.WbSunny, null, tint = Color(0xFFFFB300), modifier = Modifier.size(20.dp))
+                    Icon(
+                        Icons.Default.WbSunny,
+                        null,
+                        tint = Color(0xFFFFB300),
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Index UV", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(700))
-                    Icon(Icons.Default.Info, null, modifier = Modifier.clickable { onClickTips(NoteDetailWeather.INDEX_UV.name) }.padding(6.dp).size(16.dp))
+                    Text(
+                        "Index UV",
+                        color = Color(0xFF333333),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(700)
+                    )
+                    Icon(
+                        Icons.Default.Info,
+                        null,
+                        modifier = Modifier.clickable { onClickTips(NoteDetailWeather.INDEX_UV.name) }
+                            .padding(6.dp).size(16.dp)
+                    )
                 }
-                Text("${forecastDay.day.uv}", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(500), modifier = Modifier.padding(start = 22.dp))
+                Text(
+                    "${forecastDay.day.uv}",
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(500),
+                    modifier = Modifier.padding(start = 22.dp)
+                )
             }
         }
     }

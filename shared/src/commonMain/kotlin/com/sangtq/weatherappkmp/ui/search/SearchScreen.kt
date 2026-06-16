@@ -109,7 +109,7 @@ fun SearchScreen(
         // Search bar
         Row(
             modifier = Modifier
-                .padding(top = 20.dp)
+                .padding(top = 30.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
@@ -168,16 +168,26 @@ fun SearchScreen(
                         .background(Color.White)
                 ) {
                     favorites.forEachIndexed { index, fav ->
-                        FavoriteRow(city = fav, onClick = { onSelectLocation(fav.query) }, onRemove = { onRemoveFavorite(fav) })
+                        FavoriteRow(
+                            city = fav,
+                            onClick = { onSelectLocation(fav.query) },
+                            onRemove = { onRemoveFavorite(fav) })
                         if (index < favorites.size - 1) {
-                            HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0), modifier = Modifier.padding(horizontal = 16.dp))
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = Color(0xFFE0E0E0),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         }
                     }
                 }
             }
             if (recent.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     SectionHeader(title = "Recent searches", modifier = Modifier.weight(1f))
                     Text(
                         text = "Clear",
@@ -196,7 +206,11 @@ fun SearchScreen(
                     recent.forEachIndexed { index, q ->
                         RecentRow(query = q, onClick = { onSelectLocation(q) })
                         if (index < recent.size - 1) {
-                            HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0), modifier = Modifier.padding(horizontal = 16.dp))
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = Color(0xFFE0E0E0),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         }
                     }
                 }
@@ -207,7 +221,10 @@ fun SearchScreen(
             Spacer(modifier = Modifier.height(20.dp))
             when (searchResults) {
                 Resource.Loading -> {
-                    Box(modifier = Modifier.fillMaxWidth().padding(top = 12.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color(0xFF2F80ED),
@@ -215,6 +232,7 @@ fun SearchScreen(
                         )
                     }
                 }
+
                 is Resource.Error -> {
                     Text(
                         text = searchResults.message,
@@ -223,6 +241,7 @@ fun SearchScreen(
                         modifier = Modifier.padding(start = 4.dp)
                     )
                 }
+
                 is Resource.Success -> {
                     val locations = searchResults.data
                     if (locations.isEmpty()) {
@@ -270,14 +289,24 @@ private fun CurrentLocationItem(weather: WeatherData) {
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Default.LocationOn, null, tint = Color(0xFFEB5757), modifier = Modifier.size(20.dp))
+        Icon(
+            Icons.Default.LocationOn,
+            null,
+            tint = Color(0xFFEB5757),
+            modifier = Modifier.size(20.dp)
+        )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = "${weather.location.name}, ${weather.location.country}",
             color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(500),
             modifier = Modifier.weight(1f)
         )
-        Text(text = "${weather.current.tempC.roundToInt()}°C", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(500))
+        Text(
+            text = "${weather.current.tempC.roundToInt()}°C",
+            color = Color(0xFF333333),
+            fontSize = 14.sp,
+            fontWeight = FontWeight(500)
+        )
         Spacer(modifier = Modifier.width(8.dp))
         WeatherIcon(iconUrl = weather.current.condition.icon, modifier = Modifier.size(28.dp))
     }
@@ -297,19 +326,30 @@ private fun SectionHeader(title: String, modifier: Modifier = Modifier) {
 @Composable
 private fun FavoriteRow(city: FavoriteCity, onClick: () -> Unit, onRemove: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(Icons.Default.Star, null, tint = Color(0xFFF2C94C), modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(city.name, color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
+            Text(
+                city.name,
+                color = Color(0xFF333333),
+                fontSize = 14.sp,
+                fontWeight = FontWeight(600)
+            )
             if (city.country.isNotEmpty()) {
                 Text(city.country, color = Color(0xFF828282), fontSize = 12.sp)
             }
         }
         Box(modifier = Modifier.clickable(onClick = onRemove).padding(6.dp)) {
-            Icon(Icons.Default.Close, null, tint = Color(0xFF828282), modifier = Modifier.size(16.dp))
+            Icon(
+                Icons.Default.Close,
+                null,
+                tint = Color(0xFF828282),
+                modifier = Modifier.size(16.dp)
+            )
         }
     }
 }
@@ -317,7 +357,8 @@ private fun FavoriteRow(city: FavoriteCity, onClick: () -> Unit, onRemove: () ->
 @Composable
 private fun RecentRow(query: String, onClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(Icons.Default.History, null, tint = Color(0xFF828282), modifier = Modifier.size(20.dp))
@@ -353,7 +394,8 @@ private fun SearchResultItem(
                 fontSize = 14.sp,
                 fontWeight = FontWeight(600)
             )
-            val subtitle = listOf(location.region, location.country).filter { it.isNotEmpty() }.joinToString(", ")
+            val subtitle = listOf(location.region, location.country).filter { it.isNotEmpty() }
+                .joinToString(", ")
             if (subtitle.isNotEmpty()) {
                 Text(
                     text = subtitle,

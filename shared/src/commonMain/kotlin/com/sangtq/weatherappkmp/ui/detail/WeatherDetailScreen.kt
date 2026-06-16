@@ -88,8 +88,14 @@ fun WeatherDetailRoute(
     var weatherDetailData by remember { mutableStateOf<WeatherData?>(null) }
 
     when (val state = weatherDetailState) {
-        Resource.Loading -> { AnimatedShimmer(); return }
-        is Resource.Error -> { WeatherErrorScreen(message = state.message, onRetry = viewModel::loadWeather); return }
+        Resource.Loading -> {
+            AnimatedShimmer(); return
+        }
+
+        is Resource.Error -> {
+            WeatherErrorScreen(message = state.message, onRetry = viewModel::loadWeather); return
+        }
+
         is Resource.Success -> weatherDetailData = state.data
     }
 
@@ -102,7 +108,8 @@ fun WeatherDetailRoute(
     var noteTypeForBottomSheet by remember { mutableStateOf("") }
 
     LaunchedEffect(weatherData) {
-        hourNow.intValue = convertEpochToHour(weatherData.location.localtimeEpoch, weatherData.location.timezoneId)
+        hourNow.intValue =
+            convertEpochToHour(weatherData.location.localtimeEpoch, weatherData.location.timezoneId)
         listHourState.animateScrollToItem(
             if (hourNow.intValue > 6) hourNow.intValue - 2 else hourNow.intValue
         )
@@ -119,6 +126,7 @@ fun WeatherDetailRoute(
             // --- Gradient header card ---
             Column(
                 modifier = Modifier
+                    .padding(top = 20.dp)
                     .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
                     .background(Brush.verticalGradient(colors = backgroundColors))
                     .padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 24.dp)
@@ -198,7 +206,10 @@ fun WeatherDetailRoute(
                         forecastDay = firstDay!!,
                         hourNow = hourNow.intValue,
                         timezoneId = weatherData.location.timezoneId,
-                        onClickChooseHour = { hourNow.intValue = convertEpochToHour(it.timeEpoch, weatherData.location.timezoneId) }
+                        onClickChooseHour = {
+                            hourNow.intValue =
+                                convertEpochToHour(it.timeEpoch, weatherData.location.timezoneId)
+                        }
                     )
                 }
             }
@@ -224,34 +235,72 @@ fun WeatherDetailRoute(
                     Row {
                         DetailMetricItem(
                             modifier = Modifier.weight(1f),
-                            icon = { Icon(Icons.Default.WaterDrop, null, tint = Color(0xFF4884DA), modifier = Modifier.size(18.dp)) },
+                            icon = {
+                                Icon(
+                                    Icons.Default.WaterDrop,
+                                    null,
+                                    tint = Color(0xFF4884DA),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
                             label = "Precipitation",
                             value = "${currentHour.chanceOfRain}%",
-                            onInfoClick = { noteTypeForBottomSheet = NoteDetailWeather.PRECIPITATION.name; showBottomSheet = true }
+                            onInfoClick = {
+                                noteTypeForBottomSheet =
+                                    NoteDetailWeather.PRECIPITATION.name; showBottomSheet = true
+                            }
                         )
                         DetailMetricItem(
                             modifier = Modifier.weight(1f),
-                            icon = { Icon(Icons.Default.Air, null, modifier = Modifier.size(18.dp)) },
+                            icon = {
+                                Icon(
+                                    Icons.Default.Air,
+                                    null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
                             label = "Wind",
                             value = "${currentHour.windKph.roundToInt()} km/h",
-                            onInfoClick = { noteTypeForBottomSheet = NoteDetailWeather.WINDY.name; showBottomSheet = true }
+                            onInfoClick = {
+                                noteTypeForBottomSheet =
+                                    NoteDetailWeather.WINDY.name; showBottomSheet = true
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Row {
                         DetailMetricItem(
                             modifier = Modifier.weight(1f),
-                            icon = { Icon(Icons.Default.Opacity, null, modifier = Modifier.size(18.dp)) },
+                            icon = {
+                                Icon(
+                                    Icons.Default.Opacity,
+                                    null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
                             label = "Humidity",
                             value = "${currentHour.humidity}%",
-                            onInfoClick = { noteTypeForBottomSheet = NoteDetailWeather.HUMIDITY.name; showBottomSheet = true }
+                            onInfoClick = {
+                                noteTypeForBottomSheet =
+                                    NoteDetailWeather.HUMIDITY.name; showBottomSheet = true
+                            }
                         )
                         DetailMetricItem(
                             modifier = Modifier.weight(1f),
-                            icon = { Icon(Icons.Default.WbSunny, null, tint = Color(0xFFFFB300), modifier = Modifier.size(18.dp)) },
+                            icon = {
+                                Icon(
+                                    Icons.Default.WbSunny,
+                                    null,
+                                    tint = Color(0xFFFFB300),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
                             label = "UV Index",
                             value = "${currentHour.uv.roundToInt()}",
-                            onInfoClick = { noteTypeForBottomSheet = NoteDetailWeather.INDEX_UV.name; showBottomSheet = true }
+                            onInfoClick = {
+                                noteTypeForBottomSheet =
+                                    NoteDetailWeather.INDEX_UV.name; showBottomSheet = true
+                            }
                         )
                     }
                 }
@@ -326,7 +375,12 @@ private fun DetailMetricItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             icon()
             Spacer(modifier = Modifier.width(6.dp))
-            Text(text = label, color = Color(0xFF333333), fontSize = 13.sp, fontWeight = FontWeight(600))
+            Text(
+                text = label,
+                color = Color(0xFF333333),
+                fontSize = 13.sp,
+                fontWeight = FontWeight(600)
+            )
             Icon(
                 Icons.Default.Info,
                 contentDescription = null,
@@ -366,7 +420,12 @@ private fun DayNightDescriptionCard(
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Afternoon", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
+                Text(
+                    text = "Afternoon",
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(600)
+                )
             } else {
                 Icon(
                     imageVector = Icons.Default.Nightlight,
@@ -375,7 +434,12 @@ private fun DayNightDescriptionCard(
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Night", color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
+                Text(
+                    text = "Night",
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(600)
+                )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -454,9 +518,17 @@ internal fun SunriseSunsetCard(
                 val sunY = cy - ry * sin(angleRad).toFloat()
 
                 // Sun glow
-                drawCircle(color = Color(0xFFFFE082), radius = 14.dp.toPx(), center = Offset(sunX, sunY))
+                drawCircle(
+                    color = Color(0xFFFFE082),
+                    radius = 14.dp.toPx(),
+                    center = Offset(sunX, sunY)
+                )
                 // Sun core
-                drawCircle(color = Color(0xFFFFB300), radius = 8.dp.toPx(), center = Offset(sunX, sunY))
+                drawCircle(
+                    color = Color(0xFFFFB300),
+                    radius = 8.dp.toPx(),
+                    center = Offset(sunX, sunY)
+                )
             }
         }
 
@@ -465,11 +537,21 @@ internal fun SunriseSunsetCard(
         Row(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "Sunrise", color = Color(0xFF828282), fontSize = 12.sp)
-                Text(text = sunrise, color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
+                Text(
+                    text = sunrise,
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(600)
+                )
             }
             Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
                 Text(text = "Sunset", color = Color(0xFF828282), fontSize = 12.sp)
-                Text(text = sunset, color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
+                Text(
+                    text = sunset,
+                    color = Color(0xFF333333),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight(600)
+                )
             }
         }
     }
@@ -516,7 +598,12 @@ fun DetailHourWeatherList(
 }
 
 @Composable
-fun DetailHourItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHour: Boolean, timezoneId: String = "") {
+fun DetailHourItem(
+    modifier: Modifier = Modifier,
+    hour: HourWeather,
+    isCurrentHour: Boolean,
+    timezoneId: String = ""
+) {
     val bgColor = if (isCurrentHour) Color.White.copy(alpha = 0.3f) else Color.Transparent
     Column(
         modifier = modifier
@@ -531,10 +618,19 @@ fun DetailHourItem(modifier: Modifier = Modifier, hour: HourWeather, isCurrentHo
         } else {
             Spacer(modifier = Modifier.height(7.dp))
         }
-        Text(text = "${convertEpochToHour(hour.timeEpoch, timezoneId)}:00", color = Color.White, fontSize = 12.sp)
+        Text(
+            text = "${convertEpochToHour(hour.timeEpoch, timezoneId)}:00",
+            color = Color.White,
+            fontSize = 12.sp
+        )
         Spacer(modifier = Modifier.height(4.dp))
         WeatherIcon(iconUrl = hour.condition?.icon ?: "", modifier = Modifier.size(28.dp))
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "${hour.tempC.roundToInt()}°", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        Text(
+            text = "${hour.tempC.roundToInt()}°",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
