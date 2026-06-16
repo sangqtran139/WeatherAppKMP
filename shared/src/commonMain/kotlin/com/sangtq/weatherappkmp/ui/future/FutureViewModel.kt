@@ -2,6 +2,7 @@ package com.sangtq.weatherappkmp.ui.future
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sangtq.weatherappkmp.data.storage.PreferencesStorage
 import com.sangtq.weatherappkmp.domain.GetFutureWeatherUseCase
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FutureViewModel(
-    private val getFuture: GetFutureWeatherUseCase
+    private val getFuture: GetFutureWeatherUseCase,
+    private val preferences: PreferencesStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<Resource<WeatherData>>(Resource.Loading)
@@ -24,12 +26,22 @@ class FutureViewModel(
 
     private var lastLocation: String = ""
 
+    init {
+        viewModelScope.launch {
+            preferences.language.collect { _ ->
+                if (lastLocation.isNotEmpty() && (_uiState.value as? Resource.Success) != null) {
+                    load(lastLocation, _selectedDate.value)
+                }
+            }
+        }
+    }
+
     fun load(location: String, date: String = _selectedDate.value) {
         lastLocation = location
         _selectedDate.value = date
         viewModelScope.launch {
             _uiState.value = Resource.Loading
-            getFuture(location, date).fold(
+            getFuture(location, date, preferences.language.value.code).fold(
                 onSuccess = { _uiState.value = Resource.Success(it) },
                 onFailure = { _uiState.value = Resource.Error(it.message ?: "Unknown Error") }
             )

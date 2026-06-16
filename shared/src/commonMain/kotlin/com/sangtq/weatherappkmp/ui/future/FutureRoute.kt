@@ -8,7 +8,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangtq.weatherappkmp.ui.components.DatedWeatherScreen
 import com.sangtq.weatherappkmp.util.addDaysToIsoDate
 import com.sangtq.weatherappkmp.util.todayIsoDate
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.future_title
 
 @Composable
 fun FutureRoute(
@@ -26,7 +29,7 @@ fun FutureRoute(
     val maxDate = addDaysToIsoDate(today, 300)
 
     DatedWeatherScreen(
-        title = "Future weather",
+        title = stringResource(Res.string.future_title),
         state = state,
         date = date,
         gradient = listOf(Color(0xFF1B5E20), Color(0xFF2E7D32), Color(0xFF388E3C)),

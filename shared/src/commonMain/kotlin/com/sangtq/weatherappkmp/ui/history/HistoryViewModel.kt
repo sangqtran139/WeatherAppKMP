@@ -2,6 +2,7 @@ package com.sangtq.weatherappkmp.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sangtq.weatherappkmp.data.storage.PreferencesStorage
 import com.sangtq.weatherappkmp.domain.GetHistoryWeatherUseCase
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
@@ -12,7 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(
-    private val getHistory: GetHistoryWeatherUseCase
+    private val getHistory: GetHistoryWeatherUseCase,
+    private val preferences: PreferencesStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<Resource<WeatherData>>(Resource.Loading)
@@ -24,12 +26,22 @@ class HistoryViewModel(
 
     private var lastLocation: String = ""
 
+    init {
+        viewModelScope.launch {
+            preferences.language.collect { _ ->
+                if (lastLocation.isNotEmpty() && (_uiState.value as? Resource.Success) != null) {
+                    load(lastLocation, _selectedDate.value)
+                }
+            }
+        }
+    }
+
     fun load(location: String, date: String = _selectedDate.value) {
         lastLocation = location
         _selectedDate.value = date
         viewModelScope.launch {
             _uiState.value = Resource.Loading
-            getHistory(location, date).fold(
+            getHistory(location, date, preferences.language.value.code).fold(
                 onSuccess = { _uiState.value = Resource.Success(it) },
                 onFailure = { _uiState.value = Resource.Error(it.message ?: "Unknown Error") }
             )
@@ -45,7 +57,6 @@ class HistoryViewModel(
     fun shiftDays(days: Int) {
         val today = todayIsoDate()
         val candidate = addDaysToIsoDate(_selectedDate.value, days)
-        // History can't be in the future. Clamp to today.
         val clamped = if (candidate > today) today else candidate
         setDate(clamped)
     }

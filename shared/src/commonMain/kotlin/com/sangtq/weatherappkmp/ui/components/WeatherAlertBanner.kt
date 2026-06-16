@@ -35,6 +35,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sangtq.weatherappkmp.domain.model.WeatherAlert
+import org.jetbrains.compose.resources.stringResource
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.action_dismiss
+import weatherappkmp.shared.generated.resources.alert_areas
+import weatherappkmp.shared.generated.resources.alert_default_event
+import weatherappkmp.shared.generated.resources.alert_effective
+import weatherappkmp.shared.generated.resources.alert_expires
+import weatherappkmp.shared.generated.resources.alert_instructions
+import weatherappkmp.shared.generated.resources.alert_more_count
+import weatherappkmp.shared.generated.resources.alert_severity
+import weatherappkmp.shared.generated.resources.alert_tap_to_read
 
 @Composable
 fun WeatherAlertBanner(alerts: List<WeatherAlert>, modifier: Modifier = Modifier) {
@@ -59,8 +70,10 @@ fun WeatherAlertBanner(alerts: List<WeatherAlert>, modifier: Modifier = Modifier
             Icon(Icons.Default.Warning, contentDescription = null, tint = tint, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
+                val defaultEvent = stringResource(Res.string.alert_default_event)
+                val defaultHeadline = stringResource(Res.string.alert_tap_to_read)
                 Text(
-                    text = first.event.ifBlank { "Weather alert" },
+                    text = first.event.ifBlank { defaultEvent },
                     color = tint,
                     fontSize = 14.sp,
                     fontWeight = FontWeight(700),
@@ -68,7 +81,7 @@ fun WeatherAlertBanner(alerts: List<WeatherAlert>, modifier: Modifier = Modifier
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = first.headline.ifBlank { "Tap to read more" },
+                    text = first.headline.ifBlank { defaultHeadline },
                     color = Color(0xFF333333),
                     fontSize = 12.sp,
                     maxLines = 2,
@@ -77,14 +90,18 @@ fun WeatherAlertBanner(alerts: List<WeatherAlert>, modifier: Modifier = Modifier
                 if (alerts.size > 1) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "+${alerts.size - 1} more alert${if (alerts.size > 2) "s" else ""}",
+                        text = stringResource(
+                            Res.string.alert_more_count,
+                            alerts.size - 1,
+                            if (alerts.size > 2) "s" else ""
+                        ),
                         color = Color(0xFF828282),
                         fontSize = 11.sp
                     )
                 }
             }
             Box(modifier = Modifier.size(28.dp).clip(RoundedCornerShape(14.dp)).clickable { visible = false }, contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.Close, contentDescription = "Dismiss", tint = Color(0xFF828282), modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.action_dismiss), tint = Color(0xFF828282), modifier = Modifier.size(18.dp))
             }
         }
     }
@@ -101,23 +118,24 @@ private fun AlertDetailSheet(alert: WeatherAlert, onDismiss: () -> Unit) {
     val tint = severityColor(alert.severity)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            val defaultEvent = stringResource(Res.string.alert_default_event)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Warning, null, tint = tint, modifier = Modifier.size(22.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(alert.event.ifBlank { "Weather alert" }, color = tint, fontSize = 18.sp, fontWeight = FontWeight(700))
+                Text(alert.event.ifBlank { defaultEvent }, color = tint, fontSize = 18.sp, fontWeight = FontWeight(700))
             }
             if (alert.headline.isNotBlank()) Text(alert.headline, color = Color(0xFF333333), fontSize = 14.sp, fontWeight = FontWeight(600))
-            if (alert.severity.isNotBlank()) Text("Severity: ${alert.severity}", color = Color(0xFF828282), fontSize = 12.sp)
-            if (alert.areas.isNotBlank()) Text("Areas: ${alert.areas}", color = Color(0xFF828282), fontSize = 12.sp)
-            if (alert.effective.isNotBlank()) Text("Effective: ${alert.effective}", color = Color(0xFF828282), fontSize = 12.sp)
-            if (alert.expires.isNotBlank()) Text("Expires: ${alert.expires}", color = Color(0xFF828282), fontSize = 12.sp)
+            if (alert.severity.isNotBlank()) Text(stringResource(Res.string.alert_severity, alert.severity), color = Color(0xFF828282), fontSize = 12.sp)
+            if (alert.areas.isNotBlank()) Text(stringResource(Res.string.alert_areas, alert.areas), color = Color(0xFF828282), fontSize = 12.sp)
+            if (alert.effective.isNotBlank()) Text(stringResource(Res.string.alert_effective, alert.effective), color = Color(0xFF828282), fontSize = 12.sp)
+            if (alert.expires.isNotBlank()) Text(stringResource(Res.string.alert_expires, alert.expires), color = Color(0xFF828282), fontSize = 12.sp)
             if (alert.description.isNotBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(alert.description, color = Color(0xFF333333), fontSize = 13.sp)
             }
             if (alert.instruction.isNotBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Instructions:", color = Color(0xFF333333), fontSize = 13.sp, fontWeight = FontWeight(700))
+                Text(stringResource(Res.string.alert_instructions), color = Color(0xFF333333), fontSize = 13.sp, fontWeight = FontWeight(700))
                 Text(alert.instruction, color = Color(0xFF333333), fontSize = 13.sp)
             }
         }

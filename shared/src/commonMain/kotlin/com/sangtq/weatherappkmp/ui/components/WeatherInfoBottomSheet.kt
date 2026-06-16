@@ -25,7 +25,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sangtq.weatherappkmp.model.NoteDetailWeather
-import com.sangtq.weatherappkmp.util.convertToCamelCase
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.info_humidity_desc
+import weatherappkmp.shared.generated.resources.info_humidity_title
+import weatherappkmp.shared.generated.resources.info_precipitation_desc
+import weatherappkmp.shared.generated.resources.info_precipitation_title
+import weatherappkmp.shared.generated.resources.info_uv_desc
+import weatherappkmp.shared.generated.resources.info_wind_desc
+import weatherappkmp.shared.generated.resources.info_wind_title
+import weatherappkmp.shared.generated.resources.metric_index_uv_caps
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +45,18 @@ fun WeatherInfoBottomSheet(noteType: String, onDismiss: () -> Unit) {
         sheetState = rememberModalBottomSheetState(),
         containerColor = Color.White,
     ) {
+        val titleRes: StringResource = when (noteType) {
+            NoteDetailWeather.PRECIPITATION.name -> Res.string.info_precipitation_title
+            NoteDetailWeather.WINDY.name -> Res.string.info_wind_title
+            NoteDetailWeather.HUMIDITY.name -> Res.string.info_humidity_title
+            else -> Res.string.metric_index_uv_caps
+        }
+        val descRes: StringResource = when (noteType) {
+            NoteDetailWeather.PRECIPITATION.name -> Res.string.info_precipitation_desc
+            NoteDetailWeather.WINDY.name -> Res.string.info_wind_desc
+            NoteDetailWeather.HUMIDITY.name -> Res.string.info_humidity_desc
+            else -> Res.string.info_uv_desc
+        }
         Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 32.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -49,24 +71,14 @@ fun WeatherInfoBottomSheet(noteType: String, onDismiss: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = if (noteType == NoteDetailWeather.INDEX_UV.name) "INDEX UV"
-                    else convertToCamelCase(noteType),
+                    text = stringResource(titleRes),
                     fontSize = 16.sp,
                     fontWeight = FontWeight(500)
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = when (noteType) {
-                    NoteDetailWeather.PRECIPITATION.name ->
-                        "Precipitation is the fall of water in either liquid or frozen form from the atmosphere to the earth's surface"
-                    NoteDetailWeather.WINDY.name ->
-                        "Wind speed is a unit that measures the speed of air flow from high pressure to low pressure."
-                    NoteDetailWeather.HUMIDITY.name ->
-                        "Humidity is the level of air wetness (the amount of water contained in the air) expressed as a percentage relative to the saturation point."
-                    else ->
-                        "The UV index is a number without units to explain the level of exposure to ultraviolet radiation that is related to human health.\n\nUV Index 0-2 = Low\nUV Index 3-5 = Moderate\nUV Index 6-7 = High\nUV Index 8-10 = Very High\nUV Index >11 = Extreme"
-                },
+                text = stringResource(descRes),
                 fontSize = 14.sp,
                 color = Color(0xFF828282)
             )

@@ -9,17 +9,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
+import com.sangtq.weatherappkmp.data.storage.PreferencesStorage
 import com.sangtq.weatherappkmp.ui.astronomy.AstronomyRoute
+import com.sangtq.weatherappkmp.ui.components.LanguagePickerBottomSheet
 import com.sangtq.weatherappkmp.ui.detail.WeatherDetailRoute
 import com.sangtq.weatherappkmp.ui.future.FutureRoute
 import com.sangtq.weatherappkmp.ui.history.HistoryRoute
 import com.sangtq.weatherappkmp.ui.home.WeatherHomeRoute
+import com.sangtq.weatherappkmp.ui.i18n.ProvideAppLocale
 import com.sangtq.weatherappkmp.ui.marine.MarineRoute
 import com.sangtq.weatherappkmp.ui.search.SearchRoute
 import com.sangtq.weatherappkmp.ui.sports.SportsRoute
+import org.koin.compose.koinInject
 
 sealed class Screen {
     object Home : Screen()
@@ -40,43 +45,58 @@ fun App() {
             .build()
     }
 
-    MaterialTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
-            var currentLocation by remember { mutableStateOf("Vietnam") }
-            var permissionHandled by remember { mutableStateOf(false) }
-            val goHome: () -> Unit = { currentScreen = Screen.Home }
+    val preferences = koinInject<PreferencesStorage>()
+    val language by preferences.language.collectAsStateWithLifecycle()
 
-            when (currentScreen) {
-                is Screen.Home -> WeatherHomeRoute(
-                    modifier = Modifier,
-                    location = currentLocation,
-                    permissionHandled = permissionHandled,
-                    onPermissionHandled = { permissionHandled = true },
-                    onLocationDetected = { currentLocation = it },
-                    openWeatherDetail = { currentScreen = Screen.Detail },
-                    openSearch = { currentScreen = Screen.Search },
-                    openFeature = { feature -> currentScreen = feature }
-                )
-                is Screen.Detail -> WeatherDetailRoute(
-                    modifier = Modifier,
-                    location = currentLocation,
-                    onBackClick = goHome
-                )
-                is Screen.Search -> SearchRoute(
-                    modifier = Modifier,
-                    onBackClick = goHome,
-                    onSelectLocation = { location ->
-                        currentLocation = location
-                        permissionHandled = true
-                        currentScreen = Screen.Home
-                    }
-                )
-                is Screen.Astronomy -> AstronomyRoute(location = currentLocation, onBackClick = goHome)
-                is Screen.Marine -> MarineRoute(location = currentLocation, onBackClick = goHome)
-                is Screen.Sports -> SportsRoute(location = currentLocation, onBackClick = goHome)
-                is Screen.History -> HistoryRoute(location = currentLocation, onBackClick = goHome)
-                is Screen.Future -> FutureRoute(location = currentLocation, onBackClick = goHome)
+    ProvideAppLocale(language = language) {
+        MaterialTheme {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
+                var currentLocation by remember { mutableStateOf("Vietnam") }
+                var permissionHandled by remember { mutableStateOf(false) }
+                var showLanguagePicker by remember { mutableStateOf(false) }
+                val goHome: () -> Unit = { currentScreen = Screen.Home }
+
+                when (currentScreen) {
+                    is Screen.Home -> WeatherHomeRoute(
+                        modifier = Modifier,
+                        location = currentLocation,
+                        permissionHandled = permissionHandled,
+                        onPermissionHandled = { permissionHandled = true },
+                        onLocationDetected = { currentLocation = it },
+                        openWeatherDetail = { currentScreen = Screen.Detail },
+                        openSearch = { currentScreen = Screen.Search },
+                        openFeature = { feature -> currentScreen = feature },
+                        onShowLanguagePicker = { showLanguagePicker = true }
+                    )
+                    is Screen.Detail -> WeatherDetailRoute(
+                        modifier = Modifier,
+                        location = currentLocation,
+                        onBackClick = goHome
+                    )
+                    is Screen.Search -> SearchRoute(
+                        modifier = Modifier,
+                        onBackClick = goHome,
+                        onSelectLocation = { location ->
+                            currentLocation = location
+                            permissionHandled = true
+                            currentScreen = Screen.Home
+                        }
+                    )
+                    is Screen.Astronomy -> AstronomyRoute(location = currentLocation, onBackClick = goHome)
+                    is Screen.Marine -> MarineRoute(location = currentLocation, onBackClick = goHome)
+                    is Screen.Sports -> SportsRoute(location = currentLocation, onBackClick = goHome)
+                    is Screen.History -> HistoryRoute(location = currentLocation, onBackClick = goHome)
+                    is Screen.Future -> FutureRoute(location = currentLocation, onBackClick = goHome)
+                }
+
+                if (showLanguagePicker) {
+                    LanguagePickerBottomSheet(
+                        currentLanguage = language,
+                        onDismiss = { showLanguagePicker = false },
+                        onSelectLanguage = { preferences.setLanguage(it) }
+                    )
+                }
             }
         }
     }

@@ -7,7 +7,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sangtq.weatherappkmp.ui.components.DatedWeatherScreen
 import com.sangtq.weatherappkmp.util.todayIsoDate
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.history_title
 
 @Composable
 fun HistoryRoute(
@@ -22,7 +25,7 @@ fun HistoryRoute(
 
     val today = todayIsoDate()
     DatedWeatherScreen(
-        title = "Historical weather",
+        title = stringResource(Res.string.history_title),
         state = state,
         date = date,
         gradient = listOf(Color(0xFF5D4037), Color(0xFF6D4C41), Color(0xFF795548)),

@@ -5,17 +5,17 @@ import com.sangtq.weatherappkmp.domain.repository.FutureWeatherRepository
 import com.sangtq.weatherappkmp.domain.repository.HistoryWeatherRepository
 
 class GetHistoryWeatherUseCase(private val repository: HistoryWeatherRepository) {
-    suspend operator fun invoke(location: String, date: String): Result<WeatherData> {
+    suspend operator fun invoke(location: String, date: String, language: String = ""): Result<WeatherData> {
         if (location.isBlank()) return Result.failure(IllegalArgumentException("Location cannot be empty"))
         if (date.isBlank()) return Result.failure(IllegalArgumentException("Date cannot be empty"))
-        return repository.getHistory(location.trim(), date)
+        return repository.getHistory(location.trim(), date, language)
     }
 }
 
 class GetFutureWeatherUseCase(private val repository: FutureWeatherRepository) {
-    suspend operator fun invoke(location: String, date: String): Result<WeatherData> {
+    suspend operator fun invoke(location: String, date: String, language: String = ""): Result<WeatherData> {
         if (location.isBlank()) return Result.failure(IllegalArgumentException("Location cannot be empty"))
         if (date.isBlank()) return Result.failure(IllegalArgumentException("Date cannot be empty"))
-        return repository.getFuture(location.trim(), date)
+        return repository.getFuture(location.trim(), date, language)
     }
 }

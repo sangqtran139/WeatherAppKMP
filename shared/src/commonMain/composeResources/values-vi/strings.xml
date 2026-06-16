@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="action_back">Quay lại</string>
+    <string name="action_retry">Thử lại</string>
+    <string name="action_dismiss">Đóng</string>
+    <string name="action_clear">Xoá</string>
+    <string name="error_generic_title">Đã xảy ra lỗi</string>
+    <string name="empty_dash">—</string>
+
+    <!-- Home -->
+    <string name="home_today">Hôm nay</string>
+    <string name="home_afternoon_night">Chiều %1$d°C, Đêm %2$d°C</string>
+    <string name="home_afternoon_night_short">Chiều %1$d° / Đêm %2$d°</string>
+    <string name="home_read_more">Xem thêm</string>
+    <string name="home_next_days">Thời tiết %1$d ngày tới</string>
+    <string name="home_developed_by">Phát triển bởi SangTran</string>
+    <string name="home_more_features">Tính năng khác</string>
+    <string name="home_add_favorite">Thêm yêu thích</string>
+    <string name="home_remove_favorite">Bỏ yêu thích</string>
+
+    <!-- Weather metrics -->
+    <string name="metric_precipitation">Lượng mưa</string>
+    <string name="metric_wind">Gió</string>
+    <string name="metric_humidity">Độ ẩm</string>
+    <string name="metric_uv_index">Chỉ số UV</string>
+    <string name="metric_index_uv_caps">CHỈ SỐ UV</string>
+    <string name="metric_rain_chance">Khả năng mưa</string>
+    <string name="metric_max_wind">Gió tối đa</string>
+    <string name="metric_max_temp">Nhiệt độ cao nhất</string>
+    <string name="metric_min_temp">Nhiệt độ thấp nhất</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">%1$d km/h</string>
+    <string name="unit_percent">%1$d%</string>
+    <string name="unit_celsius">%1$d°C</string>
+    <string name="unit_meters">%1$s m</string>
+    <string name="unit_water_temp">Nước %1$d°</string>
+
+    <!-- Detail screen -->
+    <string name="detail_section_detail">Chi tiết</string>
+    <string name="detail_afternoon">Buổi chiều</string>
+    <string name="detail_night">Buổi tối</string>
+    <string name="detail_afternoon_description">%1$s với nhiệt độ cao %2$d°C và khả năng mưa %3$d%%. Gió %4$s ở mức %5$d km/h, độ ẩm %6$d%%.</string>
+    <string name="detail_night_description">%1$s với khả năng mưa %2$d%%. Nhiệt độ thấp %3$d°C.</string>
+    <string name="detail_night_wind">Gió %1$s ở mức %2$d km/h.</string>
+    <string name="detail_sunrise_sunset">Bình minh &amp; Hoàng hôn</string>
+    <string name="detail_sunrise">Bình minh</string>
+    <string name="detail_sunset">Hoàng hôn</string>
+
+    <!-- Search -->
+    <string name="search_hint">Tìm địa điểm</string>
+    <string name="search_helper">Tìm một địa điểm để xem dự báo thời tiết. Bạn cũng có thể quản lý danh sách yêu thích và xem lịch sử tìm kiếm.</string>
+    <string name="search_favorites">Yêu thích</string>
+    <string name="search_recent">Tìm kiếm gần đây</string>
+    <string name="search_no_results">Không tìm thấy địa điểm</string>
+
+    <!-- Feature menu -->
+    <string name="feature_menu_title">Tính năng khác</string>
+    <string name="feature_astronomy_title">Thiên văn</string>
+    <string name="feature_astronomy_desc">Bình minh, hoàng hôn, pha trăng</string>
+    <string name="feature_marine_title">Dự báo biển</string>
+    <string name="feature_marine_desc">Thủy triều, sóng, độ cao sóng</string>
+    <string name="feature_sports_title">Sự kiện thể thao</string>
+    <string name="feature_sports_desc">Thời tiết cho bóng đá, cricket, golf</string>
+    <string name="feature_history_title">Thời tiết quá khứ</string>
+    <string name="feature_history_desc">Xem lại thời tiết các ngày trước</string>
+    <string name="feature_future_title">Thời tiết tương lai</string>
+    <string name="feature_future_desc">Dự báo tới 300 ngày tới</string>
+    <string name="feature_language_title">Ngôn ngữ</string>
+    <string name="feature_language_desc">Chọn ngôn ngữ ứng dụng</string>
+
+    <!-- Language picker -->
+    <string name="language_picker_title">Chọn ngôn ngữ</string>
+    <string name="language_english">English</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+
+    <!-- Astronomy -->
+    <string name="astronomy_title">Thiên văn</string>
+    <string name="astronomy_moon_illuminated">Chiếu sáng %1$d%%</string>
+    <string name="astronomy_moon_up_now">Mặt trăng đang lên</string>
+    <string name="astronomy_sun">Mặt trời</string>
+    <string name="astronomy_up">Đang lên</string>
+    <string name="astronomy_moonrise">Trăng mọc</string>
+    <string name="astronomy_moonset">Trăng lặn</string>
+
+    <!-- Marine -->
+    <string name="marine_title">Dự báo biển</string>
+    <string name="marine_day_overview">Tổng quan ngày</string>
+    <string name="marine_tides">Thủy triều</string>
+    <string name="marine_hourly_swell">Sóng &amp; gió theo giờ</string>
+
+    <!-- Sports -->
+    <string name="sports_title">Sự kiện thể thao</string>
+    <string name="sports_near">Gần %1$s</string>
+    <string name="sports_football">Bóng đá</string>
+    <string name="sports_cricket">Cricket</string>
+    <string name="sports_golf">Golf</string>
+    <string name="sports_no_events">Không có sự kiện nào gần \"%1$s\"</string>
+    <string name="sports_try_city">WeatherAPI chỉ trả về sự kiện trong khu vực. Hãy thử một thành phố lớn dưới đây.</string>
+
+    <!-- Dated (History / Future) -->
+    <string name="history_title">Thời tiết quá khứ</string>
+    <string name="future_title">Thời tiết tương lai</string>
+    <string name="dated_max_min">Cao %1$d° · Thấp %2$d°</string>
+    <string name="dated_sun_moon">Mặt trời &amp; mặt trăng</string>
+
+    <!-- Coming soon -->
+    <string name="coming_soon">Sắp ra mắt</string>
+    <string name="coming_soon_desc">Tính năng đang được phát triển</string>
+
+    <!-- Weather alert -->
+    <string name="alert_default_event">Cảnh báo thời tiết</string>
+    <string name="alert_tap_to_read">Chạm để đọc thêm</string>
+    <string name="alert_more_count">+%1$d cảnh báo khác%2$s</string>
+    <string name="alert_severity">Mức độ: %1$s</string>
+    <string name="alert_areas">Khu vực: %1$s</string>
+    <string name="alert_effective">Hiệu lực: %1$s</string>
+    <string name="alert_expires">Hết hạn: %1$s</string>
+    <string name="alert_instructions">Hướng dẫn:</string>
+
+    <!-- Weather info bottom sheet -->
+    <string name="info_precipitation_title">Lượng mưa</string>
+    <string name="info_precipitation_desc">Lượng mưa là nước rơi từ khí quyển xuống bề mặt trái đất ở dạng lỏng hoặc đông đặc.</string>
+    <string name="info_wind_title">Gió</string>
+    <string name="info_wind_desc">Tốc độ gió là đại lượng đo tốc độ dòng không khí di chuyển từ nơi áp suất cao đến nơi áp suất thấp.</string>
+    <string name="info_humidity_title">Độ ẩm</string>
+    <string name="info_humidity_desc">Độ ẩm là mức độ ẩm của không khí (lượng nước trong không khí) tính theo phần trăm so với điểm bão hoà.</string>
+    <string name="info_uv_desc">Chỉ số UV là một con số không đơn vị mô tả mức độ phơi nhiễm tia cực tím liên quan đến sức khoẻ.\n\nChỉ số UV 0-2 = Thấp\nChỉ số UV 3-5 = Trung bình\nChỉ số UV 6-7 = Cao\nChỉ số UV 8-10 = Rất cao\nChỉ số UV &gt;11 = Cực cao</string>
+</resources>

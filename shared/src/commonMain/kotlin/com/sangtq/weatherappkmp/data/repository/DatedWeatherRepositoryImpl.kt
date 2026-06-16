@@ -8,10 +8,10 @@ import com.sangtq.weatherappkmp.network.WeatherApiClient
 
 class HistoryWeatherRepositoryImpl(private val apiClient: WeatherApiClient) : HistoryWeatherRepository {
     private val cache = mutableMapOf<String, WeatherData>()
-    override suspend fun getHistory(location: String, date: String): Result<WeatherData> {
-        val key = "$location#$date"
+    override suspend fun getHistory(location: String, date: String, language: String): Result<WeatherData> {
+        val key = "$location#$date#$language"
         cache[key]?.let { return Result.success(it) }
-        return apiClient.getHistory(location, date)
+        return apiClient.getHistory(location, date, language)
             .mapCatching { dto ->
                 dto.error?.takeIf { it.message.isNotBlank() }?.let { error(it.message) }
                 dto.message?.let { error(it) }
@@ -23,10 +23,10 @@ class HistoryWeatherRepositoryImpl(private val apiClient: WeatherApiClient) : Hi
 
 class FutureWeatherRepositoryImpl(private val apiClient: WeatherApiClient) : FutureWeatherRepository {
     private val cache = mutableMapOf<String, WeatherData>()
-    override suspend fun getFuture(location: String, date: String): Result<WeatherData> {
-        val key = "$location#$date"
+    override suspend fun getFuture(location: String, date: String, language: String): Result<WeatherData> {
+        val key = "$location#$date#$language"
         cache[key]?.let { return Result.success(it) }
-        return apiClient.getFuture(location, date)
+        return apiClient.getFuture(location, date, language)
             .mapCatching { dto ->
                 dto.error?.takeIf { it.message.isNotBlank() }?.let { error(it.message) }
                 dto.message?.let { error(it) }

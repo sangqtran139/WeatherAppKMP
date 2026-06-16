@@ -41,6 +41,21 @@ import androidx.compose.ui.unit.sp
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
 import com.sangtq.weatherappkmp.util.humanReadableIsoDate
+import org.jetbrains.compose.resources.stringResource
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.astronomy_moonrise
+import weatherappkmp.shared.generated.resources.astronomy_moonset
+import weatherappkmp.shared.generated.resources.dated_max_min
+import weatherappkmp.shared.generated.resources.dated_sun_moon
+import weatherappkmp.shared.generated.resources.detail_sunrise
+import weatherappkmp.shared.generated.resources.detail_sunset
+import weatherappkmp.shared.generated.resources.empty_dash
+import weatherappkmp.shared.generated.resources.metric_humidity
+import weatherappkmp.shared.generated.resources.metric_max_wind
+import weatherappkmp.shared.generated.resources.metric_rain_chance
+import weatherappkmp.shared.generated.resources.metric_uv_index
+import weatherappkmp.shared.generated.resources.unit_kmh
+import weatherappkmp.shared.generated.resources.unit_percent
 import kotlin.math.roundToInt
 
 @Composable
@@ -121,26 +136,31 @@ private fun DatedWeatherContent(data: WeatherData) {
                     text = "${day.day.avgTempC.roundToInt()}°",
                     color = Color.White, fontSize = 64.sp, fontWeight = FontWeight(700)
                 )
+                val dashLabel = stringResource(Res.string.empty_dash)
                 Text(
-                    text = day.day.condition.text.ifBlank { "—" },
+                    text = day.day.condition.text.ifBlank { dashLabel },
                     color = Color.White.copy(alpha = 0.85f), fontSize = 14.sp
                 )
                 Text(
-                    text = "Max ${day.day.maxTempC.roundToInt()}° · Min ${day.day.minTempC.roundToInt()}°",
+                    text = stringResource(
+                        Res.string.dated_max_min,
+                        day.day.maxTempC.roundToInt(),
+                        day.day.minTempC.roundToInt()
+                    ),
                     color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp
                 )
             }
         }
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                StatTile(Icons.Default.WaterDrop, "Rain chance", "${day.day.dailyChanceOfRain}%", modifier = Modifier.weight(1f))
-                StatTile(Icons.Default.Air, "Max wind", "${day.day.maxWindKph.roundToInt()} km/h", modifier = Modifier.weight(1f))
+                StatTile(Icons.Default.WaterDrop, stringResource(Res.string.metric_rain_chance), stringResource(Res.string.unit_percent, day.day.dailyChanceOfRain), modifier = Modifier.weight(1f))
+                StatTile(Icons.Default.Air, stringResource(Res.string.metric_max_wind), stringResource(Res.string.unit_kmh, day.day.maxWindKph.roundToInt()), modifier = Modifier.weight(1f))
             }
         }
         item {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                StatTile(Icons.Default.Opacity, "Humidity", "${day.day.avgHumidity}%", modifier = Modifier.weight(1f))
-                StatTile(Icons.Default.WbSunny, "UV index", "${day.day.uv}", modifier = Modifier.weight(1f))
+                StatTile(Icons.Default.Opacity, stringResource(Res.string.metric_humidity), stringResource(Res.string.unit_percent, day.day.avgHumidity), modifier = Modifier.weight(1f))
+                StatTile(Icons.Default.WbSunny, stringResource(Res.string.metric_uv_index), "${day.day.uv}", modifier = Modifier.weight(1f))
             }
         }
         if (day.astro.sunrise.isNotBlank()) {
@@ -151,13 +171,13 @@ private fun DatedWeatherContent(data: WeatherData) {
                         .background(Color.White.copy(alpha = 0.12f))
                         .padding(16.dp)
                 ) {
-                    Text("Sun & moon", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight(700))
+                    Text(stringResource(Res.string.dated_sun_moon), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight(700))
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        AstroLabel("Sunrise", day.astro.sunrise)
-                        AstroLabel("Sunset", day.astro.sunset)
-                        AstroLabel("Moonrise", day.astro.moonrise)
-                        AstroLabel("Moonset", day.astro.moonset)
+                        AstroLabel(stringResource(Res.string.detail_sunrise), day.astro.sunrise)
+                        AstroLabel(stringResource(Res.string.detail_sunset), day.astro.sunset)
+                        AstroLabel(stringResource(Res.string.astronomy_moonrise), day.astro.moonrise)
+                        AstroLabel(stringResource(Res.string.astronomy_moonset), day.astro.moonset)
                     }
                 }
             }
@@ -185,9 +205,10 @@ private fun StatTile(icon: ImageVector, label: String, value: String, modifier: 
 
 @Composable
 private fun AstroLabel(label: String, value: String) {
+    val dashLabel = stringResource(Res.string.empty_dash)
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 11.sp)
         Spacer(modifier = Modifier.height(2.dp))
-        Text(value.ifBlank { "—" }, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight(600))
+        Text(value.ifBlank { dashLabel }, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight(600))
     }
 }

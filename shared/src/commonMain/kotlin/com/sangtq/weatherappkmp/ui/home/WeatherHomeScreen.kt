@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -80,7 +81,23 @@ import com.sangtq.weatherappkmp.util.convertEpochToLocalDate
 import com.sangtq.weatherappkmp.util.getCurrentTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.home_add_favorite
+import weatherappkmp.shared.generated.resources.home_afternoon_night
+import weatherappkmp.shared.generated.resources.home_developed_by
+import weatherappkmp.shared.generated.resources.home_more_features
+import weatherappkmp.shared.generated.resources.home_next_days
+import weatherappkmp.shared.generated.resources.home_read_more
+import weatherappkmp.shared.generated.resources.home_remove_favorite
+import weatherappkmp.shared.generated.resources.home_today
+import weatherappkmp.shared.generated.resources.metric_humidity
+import weatherappkmp.shared.generated.resources.metric_precipitation
+import weatherappkmp.shared.generated.resources.metric_uv_index
+import weatherappkmp.shared.generated.resources.metric_wind
+import weatherappkmp.shared.generated.resources.unit_kmh
+import weatherappkmp.shared.generated.resources.unit_percent
 import kotlin.math.roundToInt
 
 @Composable
@@ -93,7 +110,8 @@ fun WeatherHomeRoute(
     viewModel: WeatherHomeViewModel = koinViewModel(),
     openWeatherDetail: (() -> Unit)? = null,
     openSearch: (() -> Unit)? = null,
-    openFeature: (Screen) -> Unit = {}
+    openFeature: (Screen) -> Unit = {},
+    onShowLanguagePicker: () -> Unit = {}
 ) {
     if (!permissionHandled) {
         RequestLocationPermission(
@@ -209,7 +227,7 @@ fun WeatherHomeRoute(
                         ) {
                             Icon(
                                 imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
-                                contentDescription = if (isFavorite) "Remove favorite" else "Add favorite",
+                                contentDescription = stringResource(if (isFavorite) Res.string.home_remove_favorite else Res.string.home_add_favorite),
                                 tint = if (isFavorite) Color(0xFFF2C94C) else Color(0xFF2F80ED),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -224,7 +242,7 @@ fun WeatherHomeRoute(
                         ) {
                             Icon(
                                 Icons.Default.MoreVert,
-                                contentDescription = "More features",
+                                contentDescription = stringResource(Res.string.home_more_features),
                                 tint = Color(0xFF2F80ED),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -244,7 +262,7 @@ fun WeatherHomeRoute(
                 ) {
                     Spacer(modifier = Modifier.height(36.dp))
                     Text(
-                        text = "Today",
+                        text = stringResource(Res.string.home_today),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight(500)
@@ -292,7 +310,7 @@ fun WeatherHomeRoute(
                     ) {
                         Text(
                             modifier = Modifier.padding(vertical = 18.dp),
-                            text = "Read more", fontSize = 14.sp,
+                            text = stringResource(Res.string.home_read_more), fontSize = 14.sp,
                             color = Color(0xFF2F80ED), fontWeight = FontWeight(500)
                         )
                         Icon(
@@ -319,7 +337,8 @@ fun WeatherHomeRoute(
     if (showFeatureMenu) {
         FeatureMenuBottomSheet(
             onDismiss = { showFeatureMenu = false },
-            onSelect = openFeature
+            onSelect = openFeature,
+            onSelectLanguage = onShowLanguagePicker
         )
     }
 }
@@ -333,8 +352,11 @@ fun DetailWeatherToday(modifier: Modifier = Modifier, hourNow: Int, weatherData:
                 color = Color.White, fontSize = 90.sp, fontWeight = FontWeight(500)
             )
             Text(
-                text = "Afternoon ${weatherData.forecastDays.firstOrNull()?.day?.maxTempC?.roundToInt()}°C, " +
-                        "Night ${weatherData.forecastDays.firstOrNull()?.day?.minTempC?.roundToInt()}°C",
+                text = stringResource(
+                    Res.string.home_afternoon_night,
+                    weatherData.forecastDays.firstOrNull()?.day?.maxTempC?.roundToInt() ?: 0,
+                    weatherData.forecastDays.firstOrNull()?.day?.minTempC?.roundToInt() ?: 0
+                ),
                 color = Color.White, fontSize = 14.sp
             )
         }
@@ -433,7 +455,7 @@ fun LazyListScope.forecastWeatherLazyList(
                 .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 .background(Color.White).fillMaxWidth()
                 .padding(top = 20.dp, start = 24.dp, end = 24.dp),
-            text = "Weather for the next ${forecastDays.size} days",
+            text = stringResource(Res.string.home_next_days, forecastDays.size),
             color = Color(0xFF333333), fontSize = 16.sp, fontWeight = FontWeight(600)
         )
     }
@@ -455,7 +477,7 @@ fun LazyListScope.forecastWeatherLazyList(
                 .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
                 .background(Color.White).fillMaxWidth()
                 .padding(top = 6.dp, bottom = 14.dp, start = 24.dp, end = 24.dp),
-            text = "Developed by SangTran",
+            text = stringResource(Res.string.home_developed_by),
             color = Color(0xFF828282), fontSize = 10.sp, fontWeight = FontWeight(600)
         )
         Spacer(modifier = Modifier.height(70.dp))
@@ -489,7 +511,11 @@ fun WeatherForecastItem(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Afternoon ${forecastDay.day.maxTempC.roundToInt()}° C, Night ${forecastDay.day.minTempC.roundToInt()}° C",
+                    text = stringResource(
+                        Res.string.home_afternoon_night,
+                        forecastDay.day.maxTempC.roundToInt(),
+                        forecastDay.day.minTempC.roundToInt()
+                    ),
                     color = Color(0xFF828282), fontSize = 14.sp, fontWeight = FontWeight(450),
                     maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
@@ -541,7 +567,7 @@ fun DetailWeatherForecastForDay(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        "Precipitation",
+                        stringResource(Res.string.metric_precipitation),
                         color = Color(0xFF333333),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(700)
@@ -554,7 +580,7 @@ fun DetailWeatherForecastForDay(
                     )
                 }
                 Text(
-                    "${forecastDay.day.dailyChanceOfRain}%",
+                    stringResource(Res.string.unit_percent, forecastDay.day.dailyChanceOfRain),
                     color = Color(0xFF333333),
                     fontSize = 14.sp,
                     fontWeight = FontWeight(500),
@@ -566,7 +592,7 @@ fun DetailWeatherForecastForDay(
                     Icon(Icons.Default.Air, null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        "Wind",
+                        stringResource(Res.string.metric_wind),
                         color = Color(0xFF333333),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(700)
@@ -579,7 +605,7 @@ fun DetailWeatherForecastForDay(
                     )
                 }
                 Text(
-                    "${forecastDay.day.maxWindKph.roundToInt()} km/h",
+                    stringResource(Res.string.unit_kmh, forecastDay.day.maxWindKph.roundToInt()),
                     color = Color(0xFF333333),
                     fontSize = 14.sp,
                     fontWeight = FontWeight(500),
@@ -594,7 +620,7 @@ fun DetailWeatherForecastForDay(
                     Icon(Icons.Default.Opacity, null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        "Humidity",
+                        stringResource(Res.string.metric_humidity),
                         color = Color(0xFF333333),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(700)
@@ -607,7 +633,7 @@ fun DetailWeatherForecastForDay(
                     )
                 }
                 Text(
-                    "${forecastDay.day.avgHumidity}%",
+                    stringResource(Res.string.unit_percent, forecastDay.day.avgHumidity),
                     color = Color(0xFF333333),
                     fontSize = 14.sp,
                     fontWeight = FontWeight(500),
@@ -624,7 +650,7 @@ fun DetailWeatherForecastForDay(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        "Index UV",
+                        stringResource(Res.string.metric_uv_index),
                         color = Color(0xFF333333),
                         fontSize = 14.sp,
                         fontWeight = FontWeight(700)

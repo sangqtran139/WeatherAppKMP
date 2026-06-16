@@ -26,6 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.coming_soon
+import weatherappkmp.shared.generated.resources.coming_soon_desc
 
 @Composable
 fun ComingSoonScreen(title: String, onBackClick: () -> Unit) {
@@ -50,9 +54,9 @@ fun ComingSoonScreen(title: String, onBackClick: () -> Unit) {
         }
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Text("Coming soon", color = Color(0xFF333333), fontSize = 22.sp, fontWeight = FontWeight(700))
+                Text(stringResource(Res.string.coming_soon), color = Color(0xFF333333), fontSize = 22.sp, fontWeight = FontWeight(700))
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("This feature is being built", color = Color(0xFF828282), fontSize = 14.sp)
+                Text(stringResource(Res.string.coming_soon_desc), color = Color(0xFF828282), fontSize = 14.sp)
             }
         }
     }

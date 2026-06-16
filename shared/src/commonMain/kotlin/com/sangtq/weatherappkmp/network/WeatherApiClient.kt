@@ -39,30 +39,33 @@ fun createHttpClient(isDebug: Boolean = false): HttpClient = HttpClient {
 
 class WeatherApiClient(private val client: HttpClient, private val apiKey: String) {
 
-    suspend fun getHistory(location: String, date: String): Result<ForecastWeatherDto> = runCatching {
+    suspend fun getHistory(location: String, date: String, language: String = ""): Result<ForecastWeatherDto> = runCatching {
         client.get("${ApiConfig.BASE_URL}/history.json") {
             header("x-rapidapi-key", apiKey)
             header("x-rapidapi-host", ApiConfig.API_HOST)
             parameter("q", location)
             parameter("dt", date)
+            if (language.isNotEmpty()) parameter("lang", language)
         }.body<ForecastWeatherDto>()
     }
 
-    suspend fun getFuture(location: String, date: String): Result<ForecastWeatherDto> = runCatching {
+    suspend fun getFuture(location: String, date: String, language: String = ""): Result<ForecastWeatherDto> = runCatching {
         client.get("${ApiConfig.BASE_URL}/future.json") {
             header("x-rapidapi-key", apiKey)
             header("x-rapidapi-host", ApiConfig.API_HOST)
             parameter("q", location)
             parameter("dt", date)
+            if (language.isNotEmpty()) parameter("lang", language)
         }.body<ForecastWeatherDto>()
     }
 
-    suspend fun getMarine(location: String, days: Int = 3): Result<MarineResponseDto> = runCatching {
+    suspend fun getMarine(location: String, days: Int = 3, language: String = ""): Result<MarineResponseDto> = runCatching {
         client.get("${ApiConfig.BASE_URL}/marine.json") {
             header("x-rapidapi-key", apiKey)
             header("x-rapidapi-host", ApiConfig.API_HOST)
             parameter("q", location)
             parameter("days", days)
+            if (language.isNotEmpty()) parameter("lang", language)
         }.body<MarineResponseDto>()
     }
 

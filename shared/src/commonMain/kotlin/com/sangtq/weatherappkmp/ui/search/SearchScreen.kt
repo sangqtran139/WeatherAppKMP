@@ -46,7 +46,17 @@ import com.sangtq.weatherappkmp.domain.model.SearchLocation
 import com.sangtq.weatherappkmp.domain.model.WeatherData
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
 import com.sangtq.weatherappkmp.ui.components.WeatherIcon
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.action_back
+import weatherappkmp.shared.generated.resources.action_clear
+import weatherappkmp.shared.generated.resources.search_favorites
+import weatherappkmp.shared.generated.resources.search_helper
+import weatherappkmp.shared.generated.resources.search_hint
+import weatherappkmp.shared.generated.resources.search_no_results
+import weatherappkmp.shared.generated.resources.search_recent
+import weatherappkmp.shared.generated.resources.unit_celsius
 import kotlin.math.roundToInt
 
 @Composable
@@ -119,14 +129,14 @@ fun SearchScreen(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(Res.string.action_back),
                     tint = Color(0xFF333333)
                 )
             }
             Box(modifier = Modifier.weight(1f)) {
                 if (searchQuery.isEmpty()) {
                     Text(
-                        text = "Cari alamat",
+                        text = stringResource(Res.string.search_hint),
                         color = Color(0xFFBDBDBD),
                         fontSize = 16.sp
                     )
@@ -146,7 +156,7 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Search for a location to view its weather forecast. You can also manage your favorite locations and view recent searches.",
+            text = stringResource(Res.string.search_helper),
             color = Color(0xFF828282),
             fontSize = 12.sp,
             fontWeight = FontWeight(500),
@@ -160,7 +170,7 @@ fun SearchScreen(
         if (searchQuery.isEmpty()) {
             if (favorites.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
-                SectionHeader(title = "Favorites")
+                SectionHeader(title = stringResource(Res.string.search_favorites))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -188,9 +198,9 @@ fun SearchScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    SectionHeader(title = "Recent searches", modifier = Modifier.weight(1f))
+                    SectionHeader(title = stringResource(Res.string.search_recent), modifier = Modifier.weight(1f))
                     Text(
-                        text = "Clear",
+                        text = stringResource(Res.string.action_clear),
                         color = Color(0xFF2F80ED),
                         fontSize = 12.sp,
                         fontWeight = FontWeight(600),
@@ -246,7 +256,7 @@ fun SearchScreen(
                     val locations = searchResults.data
                     if (locations.isEmpty()) {
                         Text(
-                            text = "Không tìm thấy địa điểm",
+                            text = stringResource(Res.string.search_no_results),
                             color = Color(0xFF828282),
                             fontSize = 14.sp,
                             modifier = Modifier.padding(start = 4.dp)
@@ -302,7 +312,7 @@ private fun CurrentLocationItem(weather: WeatherData) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "${weather.current.tempC.roundToInt()}°C",
+            text = stringResource(Res.string.unit_celsius, weather.current.tempC.roundToInt()),
             color = Color(0xFF333333),
             fontSize = 14.sp,
             fontWeight = FontWeight(500)

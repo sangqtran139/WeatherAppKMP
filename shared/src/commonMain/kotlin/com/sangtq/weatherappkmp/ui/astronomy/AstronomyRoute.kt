@@ -44,7 +44,19 @@ import com.sangtq.weatherappkmp.model.basenetwork.Resource
 import com.sangtq.weatherappkmp.ui.components.WeatherErrorScreen
 import com.sangtq.weatherappkmp.util.addDaysToIsoDate
 import com.sangtq.weatherappkmp.util.humanReadableIsoDate
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.astronomy_moon_illuminated
+import weatherappkmp.shared.generated.resources.astronomy_moon_up_now
+import weatherappkmp.shared.generated.resources.astronomy_moonrise
+import weatherappkmp.shared.generated.resources.astronomy_moonset
+import weatherappkmp.shared.generated.resources.astronomy_sun
+import weatherappkmp.shared.generated.resources.astronomy_title
+import weatherappkmp.shared.generated.resources.astronomy_up
+import weatherappkmp.shared.generated.resources.detail_sunrise
+import weatherappkmp.shared.generated.resources.detail_sunset
+import weatherappkmp.shared.generated.resources.empty_dash
 
 @Composable
 fun AstronomyRoute(
@@ -115,7 +127,7 @@ private fun TopBar(onBackClick: () -> Unit) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp))
         }
         Spacer(modifier = Modifier.width(12.dp))
-        Text("Astronomy", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(600))
+        Text(stringResource(Res.string.astronomy_title), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(600))
     }
 }
 
@@ -184,20 +196,23 @@ private fun MoonHero(detail: AstronomyDetail) {
             modifier = Modifier.align(Alignment.BottomCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val dashLabel = stringResource(Res.string.empty_dash)
             Text(
-                text = detail.moonPhase.ifBlank { "—" },
+                text = detail.moonPhase.ifBlank { dashLabel },
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight(700)
             )
             Text(
-                text = "${detail.moonIllumination}% illuminated",
+                text = stringResource(Res.string.astronomy_moon_illuminated, detail.moonIllumination),
                 color = Color.White.copy(alpha = 0.7f),
                 fontSize = 13.sp
             )
             if (detail.isMoonUp) {
-                Spacer(modifier = Modifier.height(8.dp))
-                StatusChip("Moon is up now", Color(0xFFB39DDB))
+                Spacer(modifier = Modifier.padding(top = 20.dp).height(8.dp))
+                StatusChip(stringResource(Res.string.astronomy_moon_up_now), Color(0xFFB39DDB))
+            } else {
+                Spacer(modifier = Modifier.padding(top = 10.dp).height(30.dp))
             }
         }
     }
@@ -213,9 +228,9 @@ private fun MoonStatsCard(detail: AstronomyDetail) {
             .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        TimeBlock("Moonrise", detail.moonrise)
+        TimeBlock(stringResource(Res.string.astronomy_moonrise), detail.moonrise)
         VerticalDivider()
-        TimeBlock("Moonset", detail.moonset)
+        TimeBlock(stringResource(Res.string.astronomy_moonset), detail.moonset)
     }
 }
 
@@ -231,17 +246,17 @@ private fun SunCard(detail: AstronomyDetail) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.WbSunny, null, tint = Color(0xFFFFD54F), modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(10.dp))
-            Text("Sun", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
+            Text(stringResource(Res.string.astronomy_sun), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
             if (detail.isSunUp) {
                 Spacer(modifier = Modifier.width(10.dp))
-                StatusChip("Up", Color(0xFFFFD54F))
+                StatusChip(stringResource(Res.string.astronomy_up), Color(0xFFFFD54F))
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            TimeBlock("Sunrise", detail.sunrise, icon = Icons.Default.WbTwilight, tint = Color(0xFFFFB74D))
+            TimeBlock(stringResource(Res.string.detail_sunrise), detail.sunrise, icon = Icons.Default.WbTwilight, tint = Color(0xFFFFB74D))
             VerticalDivider()
-            TimeBlock("Sunset", detail.sunset, icon = Icons.Default.WbTwilight, tint = Color(0xFFFF7043))
+            TimeBlock(stringResource(Res.string.detail_sunset), detail.sunset, icon = Icons.Default.WbTwilight, tint = Color(0xFFFF7043))
         }
     }
 }
@@ -270,7 +285,7 @@ private fun TimeBlock(
         }
         Text(label, color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
         Spacer(modifier = Modifier.height(2.dp))
-        Text(time.ifBlank { "—" }, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(700))
+        Text(time.ifBlank { stringResource(Res.string.empty_dash) }, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(700))
     }
 }
 

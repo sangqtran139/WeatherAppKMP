@@ -34,10 +34,18 @@ class WeatherHomeViewModel(
 
     private var lastLocation = "Vietnam"
 
+    init {
+        viewModelScope.launch {
+            preferences.language.collect { _ ->
+                if ((_uiState.value as? Resource.Success) != null) loadWeather(lastLocation)
+            }
+        }
+    }
+
     fun loadWeather(location: String = lastLocation) = viewModelScope.launch {
         lastLocation = location
         _uiState.value = Resource.Loading
-        getForecastWeather(location).fold(
+        getForecastWeather(location, language = preferences.language.value.code).fold(
             onSuccess = { _uiState.value = Resource.Success(it) },
             onFailure = { _uiState.value = Resource.Error(it.message ?: "Unknown Error") }
         )
@@ -53,7 +61,7 @@ class WeatherHomeViewModel(
             is LocationResult.PermissionDenied, is LocationResult.Error -> resolveIpFallback(fallback, onLocationDetected)
         }
         lastLocation = location
-        getForecastWeather(location).fold(
+        getForecastWeather(location, language = preferences.language.value.code).fold(
             onSuccess = { _uiState.value = Resource.Success(it) },
             onFailure = { _uiState.value = Resource.Error(it.message ?: "Unknown Error") }
         )

@@ -12,15 +12,16 @@ class ForecastWeatherRepositoryImpl(
     private var cacheKey: String? = null
     private var cache: WeatherData? = null
 
-    override suspend fun getForecastWeather(location: String, days: Int): Result<WeatherData> {
-        if (cacheKey == location && cache != null) return Result.success(cache!!)
-        return apiClient.getForecastWeather(location, days)
+    override suspend fun getForecastWeather(location: String, days: Int, language: String): Result<WeatherData> {
+        val key = "$location|$days|$language"
+        if (cacheKey == key && cache != null) return Result.success(cache!!)
+        return apiClient.getForecastWeather(location, days, language)
             .mapCatching { dto ->
                 dto.error?.takeIf { it.message.isNotBlank() }?.let { error(it.message) }
                 dto.message?.let { error(it) }
                 dto.toDomain()
             }
-            .also { result -> result.onSuccess { cache = it; cacheKey = location } }
+            .also { result -> result.onSuccess { cache = it; cacheKey = key } }
     }
 
     override fun clearCache() {

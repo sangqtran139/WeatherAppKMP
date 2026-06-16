@@ -9,10 +9,10 @@ class MarineRepositoryImpl(private val apiClient: WeatherApiClient) : MarineRepo
 
     private val cache = mutableMapOf<String, MarineForecast>()
 
-    override suspend fun getMarine(location: String, days: Int): Result<MarineForecast> {
-        val key = "$location#$days"
+    override suspend fun getMarine(location: String, days: Int, language: String): Result<MarineForecast> {
+        val key = "$location#$days#$language"
         cache[key]?.let { return Result.success(it) }
-        return apiClient.getMarine(location, days)
+        return apiClient.getMarine(location, days, language)
             .mapCatching { dto ->
                 dto.message?.let { error(it) }
                 dto.toDomain()

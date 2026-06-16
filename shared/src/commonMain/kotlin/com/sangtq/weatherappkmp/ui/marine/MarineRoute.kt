@@ -47,7 +47,20 @@ import com.sangtq.weatherappkmp.domain.model.MarineTide
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
 import com.sangtq.weatherappkmp.ui.components.WeatherErrorScreen
 import com.sangtq.weatherappkmp.util.convertEpochToHour
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.marine_day_overview
+import weatherappkmp.shared.generated.resources.marine_hourly_swell
+import weatherappkmp.shared.generated.resources.marine_tides
+import weatherappkmp.shared.generated.resources.marine_title
+import weatherappkmp.shared.generated.resources.metric_max_temp
+import weatherappkmp.shared.generated.resources.metric_max_wind
+import weatherappkmp.shared.generated.resources.metric_min_temp
+import weatherappkmp.shared.generated.resources.unit_celsius
+import weatherappkmp.shared.generated.resources.unit_kmh
+import weatherappkmp.shared.generated.resources.unit_meters
+import weatherappkmp.shared.generated.resources.unit_water_temp
 import kotlin.math.roundToInt
 
 @Composable
@@ -104,7 +117,7 @@ private fun TopBar(onBackClick: () -> Unit) {
             modifier = Modifier.clip(CircleShape).background(Color.White.copy(alpha = 0.15f)).clickable(onClick = onBackClick).padding(10.dp)
         ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White, modifier = Modifier.size(20.dp)) }
         Spacer(modifier = Modifier.width(12.dp))
-        Text("Marine forecast", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(600))
+        Text(stringResource(Res.string.marine_title), color = Color.White, fontSize = 18.sp, fontWeight = FontWeight(600))
     }
 }
 
@@ -169,12 +182,12 @@ private fun SummaryCard(day: MarineDay) {
             .background(Color.White.copy(alpha = 0.12f))
             .padding(16.dp)
     ) {
-        Text("Day overview", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
+        Text(stringResource(Res.string.marine_day_overview), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
         Spacer(modifier = Modifier.height(10.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Stat("Max temp", "${day.maxTempC.roundToInt()}°C")
-            Stat("Min temp", "${day.minTempC.roundToInt()}°C")
-            Stat("Max wind", "${day.maxWindKph.roundToInt()} km/h")
+            Stat(stringResource(Res.string.metric_max_temp), stringResource(Res.string.unit_celsius, day.maxTempC.roundToInt()))
+            Stat(stringResource(Res.string.metric_min_temp), stringResource(Res.string.unit_celsius, day.minTempC.roundToInt()))
+            Stat(stringResource(Res.string.metric_max_wind), stringResource(Res.string.unit_kmh, day.maxWindKph.roundToInt()))
         }
     }
 }
@@ -192,7 +205,7 @@ private fun TidesCard(tides: List<MarineTide>) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.Waves, null, tint = Color(0xFF80DEEA), modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Tides", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
+            Text(stringResource(Res.string.marine_tides), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
         }
         Spacer(modifier = Modifier.height(8.dp))
         tides.forEach { tide ->
@@ -202,7 +215,7 @@ private fun TidesCard(tides: List<MarineTide>) {
             ) {
                 Text(tide.time, color = Color.White, fontSize = 13.sp)
                 Text(tide.type, color = Color.White.copy(alpha = 0.85f), fontSize = 13.sp)
-                Text("${tide.heightMeters} m", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight(600))
+                Text(stringResource(Res.string.unit_meters, tide.heightMeters.toString()), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight(600))
             }
         }
     }
@@ -221,7 +234,7 @@ private fun HourlyCard(hours: List<MarineHour>, timezoneId: String) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp)) {
             Icon(Icons.Default.Tsunami, null, tint = Color(0xFF80DEEA), modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Hourly swell & wind", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
+            Text(stringResource(Res.string.marine_hourly_swell), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight(700))
         }
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -243,7 +256,7 @@ private fun MarineHourItem(hour: MarineHour, timezoneId: String) {
     ) {
         Text("${convertEpochToHour(hour.timeEpoch, timezoneId)}:00", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight(600))
         Spacer(modifier = Modifier.height(4.dp))
-        Text("${hour.swellHtMeters} m", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight(700))
+        Text(stringResource(Res.string.unit_meters, hour.swellHtMeters.toString()), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight(700))
         Text(hour.swellDir, color = Color.White.copy(alpha = 0.7f), fontSize = 10.sp)
         Spacer(modifier = Modifier.height(6.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -251,7 +264,7 @@ private fun MarineHourItem(hour: MarineHour, timezoneId: String) {
             Spacer(modifier = Modifier.width(2.dp))
             Text("${hour.windKph.roundToInt()}", color = Color.White, fontSize = 11.sp)
         }
-        Text("Water ${hour.waterTempC.roundToInt()}°", color = Color.White.copy(alpha = 0.7f), fontSize = 10.sp)
+        Text(stringResource(Res.string.unit_water_temp, hour.waterTempC.roundToInt()), color = Color.White.copy(alpha = 0.7f), fontSize = 10.sp)
     }
 }
 

@@ -2,6 +2,7 @@ package com.sangtq.weatherappkmp.data.storage
 
 import com.russhwolf.settings.Settings
 import com.sangtq.weatherappkmp.domain.model.FavoriteCity
+import com.sangtq.weatherappkmp.ui.i18n.AppLanguage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.Json
 
 private const val KEY_FAVORITES = "favorites_v1"
 private const val KEY_RECENT = "recent_searches_v1"
+private const val KEY_LANGUAGE = "app_language_v1"
 private const val MAX_RECENT = 8
 
 class PreferencesStorage(private val settings: Settings) {
@@ -24,6 +26,17 @@ class PreferencesStorage(private val settings: Settings) {
 
     private val _recent = MutableStateFlow(loadRecent())
     val recent: StateFlow<List<String>> = _recent.asStateFlow()
+
+    private val _language = MutableStateFlow(loadLanguage())
+    val language: StateFlow<AppLanguage> = _language.asStateFlow()
+
+    fun setLanguage(language: AppLanguage) {
+        _language.value = language
+        settings.putString(KEY_LANGUAGE, language.code)
+    }
+
+    private fun loadLanguage(): AppLanguage =
+        AppLanguage.fromCode(settings.getStringOrNull(KEY_LANGUAGE))
 
     fun isFavorite(query: String): Boolean = _favorites.value.any { it.query.equals(query, ignoreCase = true) }
 

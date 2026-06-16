@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DirectionsBoat
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.SportsSoccer
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,50 +38,86 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sangtq.weatherappkmp.Screen
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.feature_astronomy_desc
+import weatherappkmp.shared.generated.resources.feature_astronomy_title
+import weatherappkmp.shared.generated.resources.feature_future_desc
+import weatherappkmp.shared.generated.resources.feature_future_title
+import weatherappkmp.shared.generated.resources.feature_history_desc
+import weatherappkmp.shared.generated.resources.feature_history_title
+import weatherappkmp.shared.generated.resources.feature_language_desc
+import weatherappkmp.shared.generated.resources.feature_language_title
+import weatherappkmp.shared.generated.resources.feature_marine_desc
+import weatherappkmp.shared.generated.resources.feature_marine_title
+import weatherappkmp.shared.generated.resources.feature_menu_title
+import weatherappkmp.shared.generated.resources.feature_sports_desc
+import weatherappkmp.shared.generated.resources.feature_sports_title
 
-private data class FeatureMenuItem(
-    val title: String,
-    val description: String,
+private sealed class FeatureMenuItem(
+    val titleRes: StringResource,
+    val descriptionRes: StringResource,
     val icon: ImageVector,
-    val tint: Color,
-    val screen: Screen
-)
+    val tint: Color
+) {
+    class Navigate(
+        titleRes: StringResource,
+        descriptionRes: StringResource,
+        icon: ImageVector,
+        tint: Color,
+        val screen: Screen
+    ) : FeatureMenuItem(titleRes, descriptionRes, icon, tint)
 
-private val featureMenuItems = listOf(
-    FeatureMenuItem(
-        title = "Astronomy",
-        description = "Sunrise, sunset, moon phase",
+    class Language(
+        titleRes: StringResource,
+        descriptionRes: StringResource,
+        icon: ImageVector,
+        tint: Color
+    ) : FeatureMenuItem(titleRes, descriptionRes, icon, tint)
+}
+
+private val featureMenuItems: List<FeatureMenuItem> = listOf(
+    FeatureMenuItem.Navigate(
+        titleRes = Res.string.feature_astronomy_title,
+        descriptionRes = Res.string.feature_astronomy_desc,
         icon = Icons.Default.NightsStay,
         tint = Color(0xFF6C5CE7),
         screen = Screen.Astronomy
     ),
-    FeatureMenuItem(
-        title = "Marine forecast",
-        description = "Tides, waves, swell",
+    FeatureMenuItem.Navigate(
+        titleRes = Res.string.feature_marine_title,
+        descriptionRes = Res.string.feature_marine_desc,
         icon = Icons.Default.DirectionsBoat,
         tint = Color(0xFF00B4D8),
         screen = Screen.Marine
     ),
-    FeatureMenuItem(
-        title = "Sports events",
-        description = "Football, cricket, golf weather",
+    FeatureMenuItem.Navigate(
+        titleRes = Res.string.feature_sports_title,
+        descriptionRes = Res.string.feature_sports_desc,
         icon = Icons.Default.SportsSoccer,
         tint = Color(0xFFEB5757),
         screen = Screen.Sports
     ),
-    FeatureMenuItem(
-        title = "Historical weather",
-        description = "Look back at past weather",
+    FeatureMenuItem.Navigate(
+        titleRes = Res.string.feature_history_title,
+        descriptionRes = Res.string.feature_history_desc,
         icon = Icons.Default.History,
         tint = Color(0xFFF2994A),
         screen = Screen.History
     ),
-    FeatureMenuItem(
-        title = "Future weather",
-        description = "Forecast up to 300 days ahead",
+    FeatureMenuItem.Navigate(
+        titleRes = Res.string.feature_future_title,
+        descriptionRes = Res.string.feature_future_desc,
         icon = Icons.Default.CalendarMonth,
         tint = Color(0xFF27AE60),
         screen = Screen.Future
+    ),
+    FeatureMenuItem.Language(
+        titleRes = Res.string.feature_language_title,
+        descriptionRes = Res.string.feature_language_desc,
+        icon = Icons.Default.Language,
+        tint = Color(0xFF2F80ED)
     )
 )
 
@@ -88,13 +125,14 @@ private val featureMenuItems = listOf(
 @Composable
 fun FeatureMenuBottomSheet(
     onDismiss: () -> Unit,
-    onSelect: (Screen) -> Unit
+    onSelect: (Screen) -> Unit,
+    onSelectLanguage: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)) {
             Text(
-                text = "More features",
+                text = stringResource(Res.string.feature_menu_title),
                 color = Color(0xFF333333),
                 fontSize = 18.sp,
                 fontWeight = FontWeight(700),
@@ -103,7 +141,10 @@ fun FeatureMenuBottomSheet(
             LazyColumn(contentPadding = PaddingValues(horizontal = 12.dp)) {
                 items(featureMenuItems) { item ->
                     FeatureRow(item = item, onClick = {
-                        onSelect(item.screen)
+                        when (item) {
+                            is FeatureMenuItem.Navigate -> onSelect(item.screen)
+                            is FeatureMenuItem.Language -> onSelectLanguage()
+                        }
                         onDismiss()
                     })
                     Spacer(modifier = Modifier.height(4.dp))
@@ -131,8 +172,8 @@ private fun FeatureRow(item: FeatureMenuItem, onClick: () -> Unit) {
         }
         Spacer(modifier = Modifier.width(14.dp))
         Column(modifier = Modifier.padding(end = 8.dp), verticalArrangement = Arrangement.Center) {
-            Text(item.title, color = Color(0xFF333333), fontSize = 15.sp, fontWeight = FontWeight(600))
-            Text(item.description, color = Color(0xFF828282), fontSize = 12.sp)
+            Text(stringResource(item.titleRes), color = Color(0xFF333333), fontSize = 15.sp, fontWeight = FontWeight(600))
+            Text(stringResource(item.descriptionRes), color = Color(0xFF828282), fontSize = 12.sp)
         }
     }
 }

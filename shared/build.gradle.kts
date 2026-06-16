@@ -9,6 +9,13 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xwarning-level=ERROR_SUPPRESSION:disabled",
+        )
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -21,6 +28,7 @@ kotlin {
 
     androidLibrary {
         namespace = "com.sangtq.weatherappkmp.shared"
+        //noinspection GradleDependency
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -53,7 +61,7 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.material.icons.extended)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.ktor.client.core)

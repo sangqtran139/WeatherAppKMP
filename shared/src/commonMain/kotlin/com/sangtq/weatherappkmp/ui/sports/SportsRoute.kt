@@ -47,7 +47,16 @@ import com.sangtq.weatherappkmp.domain.model.SportEvent
 import com.sangtq.weatherappkmp.domain.model.SportsData
 import com.sangtq.weatherappkmp.model.basenetwork.Resource
 import com.sangtq.weatherappkmp.ui.components.WeatherErrorScreen
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.sports_cricket
+import weatherappkmp.shared.generated.resources.sports_football
+import weatherappkmp.shared.generated.resources.sports_golf
+import weatherappkmp.shared.generated.resources.sports_near
+import weatherappkmp.shared.generated.resources.sports_no_events
+import weatherappkmp.shared.generated.resources.sports_title
+import weatherappkmp.shared.generated.resources.sports_try_city
 
 private val popularCities = listOf("London", "New York", "Sydney", "Tokyo", "Mumbai")
 
@@ -125,9 +134,9 @@ private fun TopBar(onBackClick: () -> Unit, activeQuery: String) {
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text("Sports events", color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight(600))
+            Text(stringResource(Res.string.sports_title), color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight(600))
             if (activeQuery.isNotBlank()) {
-                Text("Near $activeQuery", color = Color(0xFF828282), fontSize = 12.sp)
+                Text(stringResource(Res.string.sports_near, activeQuery), color = Color(0xFF828282), fontSize = 12.sp)
             }
         }
     }
@@ -136,9 +145,9 @@ private fun TopBar(onBackClick: () -> Unit, activeQuery: String) {
 @Composable
 private fun CategoryTabs(selected: SportCategory, onSelect: (SportCategory) -> Unit) {
     val items = listOf(
-        Triple(SportCategory.FOOTBALL, Icons.Default.SportsSoccer, "Football"),
-        Triple(SportCategory.CRICKET, Icons.Default.SportsCricket, "Cricket"),
-        Triple(SportCategory.GOLF, Icons.Default.GolfCourse, "Golf")
+        Triple(SportCategory.FOOTBALL, Icons.Default.SportsSoccer, stringResource(Res.string.sports_football)),
+        Triple(SportCategory.CRICKET, Icons.Default.SportsCricket, stringResource(Res.string.sports_cricket)),
+        Triple(SportCategory.GOLF, Icons.Default.GolfCourse, stringResource(Res.string.sports_golf))
     )
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -176,7 +185,7 @@ private fun EventList(events: List<SportEvent>, activeQuery: String, onTryCity: 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "No events found near \"$activeQuery\"",
+                text = stringResource(Res.string.sports_no_events, activeQuery),
                 color = Color(0xFF333333),
                 fontSize = 15.sp,
                 fontWeight = FontWeight(600),
@@ -184,7 +193,7 @@ private fun EventList(events: List<SportEvent>, activeQuery: String, onTryCity: 
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "WeatherAPI only returns events within the area. Try a major city below.",
+                text = stringResource(Res.string.sports_try_city),
                 color = Color(0xFF828282),
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center

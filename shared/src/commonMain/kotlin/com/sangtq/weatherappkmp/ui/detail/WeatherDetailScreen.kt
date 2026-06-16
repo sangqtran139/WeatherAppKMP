@@ -66,7 +66,26 @@ import com.sangtq.weatherappkmp.ui.components.WeatherInfoBottomSheet
 import com.sangtq.weatherappkmp.ui.components.weatherBackgroundColors
 import com.sangtq.weatherappkmp.util.convertEpochToHour
 import com.sangtq.weatherappkmp.util.convertEpochToLocalDate
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.action_back
+import weatherappkmp.shared.generated.resources.detail_afternoon
+import weatherappkmp.shared.generated.resources.detail_afternoon_description
+import weatherappkmp.shared.generated.resources.detail_night
+import weatherappkmp.shared.generated.resources.detail_night_description
+import weatherappkmp.shared.generated.resources.detail_night_wind
+import weatherappkmp.shared.generated.resources.detail_section_detail
+import weatherappkmp.shared.generated.resources.detail_sunrise
+import weatherappkmp.shared.generated.resources.detail_sunrise_sunset
+import weatherappkmp.shared.generated.resources.detail_sunset
+import weatherappkmp.shared.generated.resources.home_afternoon_night_short
+import weatherappkmp.shared.generated.resources.metric_humidity
+import weatherappkmp.shared.generated.resources.metric_precipitation
+import weatherappkmp.shared.generated.resources.metric_uv_index
+import weatherappkmp.shared.generated.resources.metric_wind
+import weatherappkmp.shared.generated.resources.unit_kmh
+import weatherappkmp.shared.generated.resources.unit_percent
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -138,7 +157,7 @@ fun WeatherDetailRoute(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(Res.string.action_back),
                         tint = Color.White,
                         modifier = Modifier.clickable { onBackClick() }.size(24.dp)
                     )
@@ -186,7 +205,11 @@ fun WeatherDetailRoute(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Afternoon ${firstDay?.day?.maxTempC?.roundToInt()}° / Night ${firstDay?.day?.minTempC?.roundToInt()}°",
+                            text = stringResource(
+                                Res.string.home_afternoon_night_short,
+                                firstDay?.day?.maxTempC?.roundToInt() ?: 0,
+                                firstDay?.day?.minTempC?.roundToInt() ?: 0
+                            ),
                             color = Color.White.copy(alpha = 0.8f),
                             fontSize = 13.sp
                         )
@@ -203,7 +226,7 @@ fun WeatherDetailRoute(
                 if (firstDay != null && firstDay.hours.isNotEmpty()) {
                     DetailHourWeatherList(
                         state = listHourState,
-                        forecastDay = firstDay!!,
+                        forecastDay = firstDay,
                         hourNow = hourNow.intValue,
                         timezoneId = weatherData.location.timezoneId,
                         onClickChooseHour = {
@@ -226,7 +249,7 @@ fun WeatherDetailRoute(
                         .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
                     Text(
-                        text = "Detail",
+                        text = stringResource(Res.string.detail_section_detail),
                         color = Color(0xFF828282),
                         fontSize = 12.sp,
                         fontWeight = FontWeight(600)
@@ -243,8 +266,8 @@ fun WeatherDetailRoute(
                                     modifier = Modifier.size(18.dp)
                                 )
                             },
-                            label = "Precipitation",
-                            value = "${currentHour.chanceOfRain}%",
+                            label = stringResource(Res.string.metric_precipitation),
+                            value = stringResource(Res.string.unit_percent, currentHour.chanceOfRain),
                             onInfoClick = {
                                 noteTypeForBottomSheet =
                                     NoteDetailWeather.PRECIPITATION.name; showBottomSheet = true
@@ -259,8 +282,8 @@ fun WeatherDetailRoute(
                                     modifier = Modifier.size(18.dp)
                                 )
                             },
-                            label = "Wind",
-                            value = "${currentHour.windKph.roundToInt()} km/h",
+                            label = stringResource(Res.string.metric_wind),
+                            value = stringResource(Res.string.unit_kmh, currentHour.windKph.roundToInt()),
                             onInfoClick = {
                                 noteTypeForBottomSheet =
                                     NoteDetailWeather.WINDY.name; showBottomSheet = true
@@ -278,8 +301,8 @@ fun WeatherDetailRoute(
                                     modifier = Modifier.size(18.dp)
                                 )
                             },
-                            label = "Humidity",
-                            value = "${currentHour.humidity}%",
+                            label = stringResource(Res.string.metric_humidity),
+                            value = stringResource(Res.string.unit_percent, currentHour.humidity),
                             onInfoClick = {
                                 noteTypeForBottomSheet =
                                     NoteDetailWeather.HUMIDITY.name; showBottomSheet = true
@@ -295,7 +318,7 @@ fun WeatherDetailRoute(
                                     modifier = Modifier.size(18.dp)
                                 )
                             },
-                            label = "UV Index",
+                            label = stringResource(Res.string.metric_uv_index),
                             value = "${currentHour.uv.roundToInt()}",
                             onInfoClick = {
                                 noteTypeForBottomSheet =
@@ -309,13 +332,15 @@ fun WeatherDetailRoute(
 
                 // --- Siang section ---
                 val afternoonHour = firstDay.hours.getOrNull(14)
-                val siangDesc = buildString {
-                    append(afternoonHour?.condition?.text ?: firstDay.day.condition.text)
-                    append(" with high temperature ${firstDay.day.maxTempC.roundToInt()}°C")
-                    append(" and precipitation chance ${afternoonHour?.chanceOfRain ?: firstDay.day.dailyChanceOfRain}%.")
-                    append(" ${afternoonHour?.windDir ?: ""} winds at ${afternoonHour?.windKph?.roundToInt() ?: firstDay.day.maxWindKph.roundToInt()} km/h,")
-                    append(" humidity ${afternoonHour?.humidity ?: firstDay.day.avgHumidity}%.")
-                }
+                val siangDesc = stringResource(
+                    Res.string.detail_afternoon_description,
+                    afternoonHour?.condition?.text ?: firstDay.day.condition.text,
+                    firstDay.day.maxTempC.roundToInt(),
+                    afternoonHour?.chanceOfRain ?: firstDay.day.dailyChanceOfRain,
+                    afternoonHour?.windDir ?: "",
+                    afternoonHour?.windKph?.roundToInt() ?: firstDay.day.maxWindKph.roundToInt(),
+                    afternoonHour?.humidity ?: firstDay.day.avgHumidity
+                )
 
                 DayNightDescriptionCard(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -327,12 +352,16 @@ fun WeatherDetailRoute(
 
                 // --- Malam section ---
                 val nightHour = firstDay.hours.getOrNull(21)
-                val malamDesc = buildString {
-                    append(nightHour?.condition?.text ?: firstDay.day.condition.text)
-                    append(" with precipitation chance ${nightHour?.chanceOfRain ?: firstDay.day.dailyChanceOfRain}%.")
-                    append(" Low temperature ${firstDay.day.minTempC.roundToInt()}°C.")
-                    if (nightHour != null) append(" ${nightHour.windDir} winds at ${nightHour.windKph.roundToInt()} km/h.")
-                }
+                val nightBase = stringResource(
+                    Res.string.detail_night_description,
+                    nightHour?.condition?.text ?: firstDay.day.condition.text,
+                    nightHour?.chanceOfRain ?: firstDay.day.dailyChanceOfRain,
+                    firstDay.day.minTempC.roundToInt()
+                )
+                val nightWind = if (nightHour != null) {
+                    " " + stringResource(Res.string.detail_night_wind, nightHour.windDir, nightHour.windKph.roundToInt())
+                } else ""
+                val malamDesc = nightBase + nightWind
 
                 DayNightDescriptionCard(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -421,7 +450,7 @@ private fun DayNightDescriptionCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Afternoon",
+                    text = stringResource(Res.string.detail_afternoon),
                     color = Color(0xFF333333),
                     fontSize = 14.sp,
                     fontWeight = FontWeight(600)
@@ -435,7 +464,7 @@ private fun DayNightDescriptionCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Night",
+                    text = stringResource(Res.string.detail_night),
                     color = Color(0xFF333333),
                     fontSize = 14.sp,
                     fontWeight = FontWeight(600)
@@ -467,7 +496,7 @@ internal fun SunriseSunsetCard(
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Text(
-            text = "Sunrise & Sunset",
+            text = stringResource(Res.string.detail_sunrise_sunset),
             color = Color(0xFF828282),
             fontSize = 12.sp,
             fontWeight = FontWeight(600)
@@ -536,7 +565,7 @@ internal fun SunriseSunsetCard(
 
         Row(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "Sunrise", color = Color(0xFF828282), fontSize = 12.sp)
+                Text(text = stringResource(Res.string.detail_sunrise), color = Color(0xFF828282), fontSize = 12.sp)
                 Text(
                     text = sunrise,
                     color = Color(0xFF333333),
@@ -545,7 +574,7 @@ internal fun SunriseSunsetCard(
                 )
             }
             Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
-                Text(text = "Sunset", color = Color(0xFF828282), fontSize = 12.sp)
+                Text(text = stringResource(Res.string.detail_sunset), color = Color(0xFF828282), fontSize = 12.sp)
                 Text(
                     text = sunset,
                     color = Color(0xFF333333),
@@ -624,7 +653,7 @@ fun DetailHourItem(
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
-        WeatherIcon(iconUrl = hour.condition?.icon ?: "", modifier = Modifier.size(28.dp))
+        WeatherIcon(iconUrl = hour.condition.icon, modifier = Modifier.size(28.dp))
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "${hour.tempC.roundToInt()}°",

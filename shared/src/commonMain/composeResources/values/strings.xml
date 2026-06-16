@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="action_back">Back</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_clear">Clear</string>
+    <string name="error_generic_title">Something went wrong</string>
+    <string name="empty_dash">—</string>
+
+    <!-- Home -->
+    <string name="home_today">Today</string>
+    <string name="home_afternoon_night">Afternoon %1$d°C, Night %2$d°C</string>
+    <string name="home_afternoon_night_short">Afternoon %1$d° / Night %2$d°</string>
+    <string name="home_read_more">Read more</string>
+    <string name="home_next_days">Weather for the next %1$d days</string>
+    <string name="home_developed_by">Developed by SangTran</string>
+    <string name="home_more_features">More features</string>
+    <string name="home_add_favorite">Add favorite</string>
+    <string name="home_remove_favorite">Remove favorite</string>
+
+    <!-- Weather metrics -->
+    <string name="metric_precipitation">Precipitation</string>
+    <string name="metric_wind">Wind</string>
+    <string name="metric_humidity">Humidity</string>
+    <string name="metric_uv_index">UV Index</string>
+    <string name="metric_index_uv_caps">INDEX UV</string>
+    <string name="metric_rain_chance">Rain chance</string>
+    <string name="metric_max_wind">Max wind</string>
+    <string name="metric_max_temp">Max temp</string>
+    <string name="metric_min_temp">Min temp</string>
+
+    <!-- Units -->
+    <string name="unit_kmh">%1$d km/h</string>
+    <string name="unit_percent">%1$d%%</string>
+    <string name="unit_celsius">%1$d°C</string>
+    <string name="unit_meters">%1$s m</string>
+    <string name="unit_water_temp">Water %1$d°</string>
+
+    <!-- Detail screen -->
+    <string name="detail_section_detail">Detail</string>
+    <string name="detail_afternoon">Afternoon</string>
+    <string name="detail_night">Night</string>
+    <string name="detail_afternoon_description">%1$s with high temperature %2$d°C and precipitation chance %3$d%%. %4$s winds at %5$d km/h, humidity %6$d%%.</string>
+    <string name="detail_night_description">%1$s with precipitation chance %2$d%%. Low temperature %3$d°C.</string>
+    <string name="detail_night_wind">%1$s winds at %2$d km/h.</string>
+    <string name="detail_sunrise_sunset">Sunrise &amp; Sunset</string>
+    <string name="detail_sunrise">Sunrise</string>
+    <string name="detail_sunset">Sunset</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search for a location</string>
+    <string name="search_helper">Search for a location to view its weather forecast. You can also manage your favorite locations and view recent searches.</string>
+    <string name="search_favorites">Favorites</string>
+    <string name="search_recent">Recent searches</string>
+    <string name="search_no_results">No locations found</string>
+
+    <!-- Feature menu -->
+    <string name="feature_menu_title">More features</string>
+    <string name="feature_astronomy_title">Astronomy</string>
+    <string name="feature_astronomy_desc">Sunrise, sunset, moon phase</string>
+    <string name="feature_marine_title">Marine forecast</string>
+    <string name="feature_marine_desc">Tides, waves, swell</string>
+    <string name="feature_sports_title">Sports events</string>
+    <string name="feature_sports_desc">Football, cricket, golf weather</string>
+    <string name="feature_history_title">Historical weather</string>
+    <string name="feature_history_desc">Look back at past weather</string>
+    <string name="feature_future_title">Future weather</string>
+    <string name="feature_future_desc">Forecast up to 300 days ahead</string>
+    <string name="feature_language_title">Language</string>
+    <string name="feature_language_desc">Choose app language</string>
+
+    <!-- Language picker -->
+    <string name="language_picker_title">Choose language</string>
+    <string name="language_english">English</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+
+    <!-- Astronomy -->
+    <string name="astronomy_title">Astronomy</string>
+    <string name="astronomy_moon_illuminated">%1$d%% illuminated</string>
+    <string name="astronomy_moon_up_now">Moon is up now</string>
+    <string name="astronomy_sun">Sun</string>
+    <string name="astronomy_up">Up</string>
+    <string name="astronomy_moonrise">Moonrise</string>
+    <string name="astronomy_moonset">Moonset</string>
+
+    <!-- Marine -->
+    <string name="marine_title">Marine forecast</string>
+    <string name="marine_day_overview">Day overview</string>
+    <string name="marine_tides">Tides</string>
+    <string name="marine_hourly_swell">Hourly swell &amp; wind</string>
+
+    <!-- Sports -->
+    <string name="sports_title">Sports events</string>
+    <string name="sports_near">Near %1$s</string>
+    <string name="sports_football">Football</string>
+    <string name="sports_cricket">Cricket</string>
+    <string name="sports_golf">Golf</string>
+    <string name="sports_no_events">No events found near \"%1$s\"</string>
+    <string name="sports_try_city">WeatherAPI only returns events within the area. Try a major city below.</string>
+
+    <!-- Dated (History / Future) -->
+    <string name="history_title">Historical weather</string>
+    <string name="future_title">Future weather</string>
+    <string name="dated_max_min">Max %1$d° · Min %2$d°</string>
+    <string name="dated_sun_moon">Sun &amp; moon</string>
+
+    <!-- Coming soon -->
+    <string name="coming_soon">Coming soon</string>
+    <string name="coming_soon_desc">This feature is being built</string>
+
+    <!-- Weather alert -->
+    <string name="alert_default_event">Weather alert</string>
+    <string name="alert_tap_to_read">Tap to read more</string>
+    <string name="alert_more_count">+%1$d more alert%2$s</string>
+    <string name="alert_severity">Severity: %1$s</string>
+    <string name="alert_areas">Areas: %1$s</string>
+    <string name="alert_effective">Effective: %1$s</string>
+    <string name="alert_expires">Expires: %1$s</string>
+    <string name="alert_instructions">Instructions:</string>
+
+    <!-- Weather info bottom sheet -->
+    <string name="info_precipitation_title">Precipitation</string>
+    <string name="info_precipitation_desc">Precipitation is the fall of water in either liquid or frozen form from the atmosphere to the earth\'s surface.</string>
+    <string name="info_wind_title">Wind</string>
+    <string name="info_wind_desc">Wind speed is a unit that measures the speed of air flow from high pressure to low pressure.</string>
+    <string name="info_humidity_title">Humidity</string>
+    <string name="info_humidity_desc">Humidity is the level of air wetness (the amount of water contained in the air) expressed as a percentage relative to the saturation point.</string>
+    <string name="info_uv_desc">The UV index is a number without units to explain the level of exposure to ultraviolet radiation that is related to human health.\n\nUV Index 0-2 = Low\nUV Index 3-5 = Moderate\nUV Index 6-7 = High\nUV Index 8-10 = Very High\nUV Index &gt;11 = Extreme</string>
+</resources>

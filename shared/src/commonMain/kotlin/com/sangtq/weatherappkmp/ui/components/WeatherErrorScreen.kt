@@ -16,6 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
+import weatherappkmp.shared.generated.resources.Res
+import weatherappkmp.shared.generated.resources.action_retry
+import weatherappkmp.shared.generated.resources.error_generic_title
 
 @Composable
 fun WeatherErrorScreen(message: String, onRetry: () -> Unit) {
@@ -25,7 +29,7 @@ fun WeatherErrorScreen(message: String, onRetry: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Something went wrong",
+            text = stringResource(Res.string.error_generic_title),
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF333333)
@@ -39,7 +43,7 @@ fun WeatherErrorScreen(message: String, onRetry: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onRetry) {
-            Text(text = "Retry")
+            Text(text = stringResource(Res.string.action_retry))
         }
     }
 }
