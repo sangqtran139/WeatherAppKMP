@@ -12,7 +12,11 @@ class HistoryWeatherRepositoryImpl(private val apiClient: WeatherApiClient) : Hi
         val key = "$location#$date"
         cache[key]?.let { return Result.success(it) }
         return apiClient.getHistory(location, date)
-            .map { it.toDomain() }
+            .mapCatching { dto ->
+                dto.error?.takeIf { it.message.isNotBlank() }?.let { error(it.message) }
+                dto.message?.let { error(it) }
+                dto.toDomain()
+            }
             .also { result -> result.onSuccess { cache[key] = it } }
     }
 }
@@ -23,7 +27,11 @@ class FutureWeatherRepositoryImpl(private val apiClient: WeatherApiClient) : Fut
         val key = "$location#$date"
         cache[key]?.let { return Result.success(it) }
         return apiClient.getFuture(location, date)
-            .map { it.toDomain() }
+            .mapCatching { dto ->
+                dto.error?.takeIf { it.message.isNotBlank() }?.let { error(it.message) }
+                dto.message?.let { error(it) }
+                dto.toDomain()
+            }
             .also { result -> result.onSuccess { cache[key] = it } }
     }
 }

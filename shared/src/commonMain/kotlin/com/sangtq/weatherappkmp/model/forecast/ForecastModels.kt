@@ -8,7 +8,15 @@ data class ForecastWeatherDto(
     val current: Current? = null,
     val forecast: ForecastX? = null,
     val location: Location? = null,
-    val alerts: AlertsContainer? = null
+    val alerts: AlertsContainer? = null,
+    val message: String? = null,
+    val error: ApiErrorPayload? = null
+)
+
+@Serializable
+data class ApiErrorPayload(
+    val code: Int = 0,
+    val message: String = ""
 )
 
 @Serializable

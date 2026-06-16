@@ -15,7 +15,11 @@ class ForecastWeatherRepositoryImpl(
     override suspend fun getForecastWeather(location: String, days: Int): Result<WeatherData> {
         if (cacheKey == location && cache != null) return Result.success(cache!!)
         return apiClient.getForecastWeather(location, days)
-            .map { it.toDomain() }
+            .mapCatching { dto ->
+                dto.error?.takeIf { it.message.isNotBlank() }?.let { error(it.message) }
+                dto.message?.let { error(it) }
+                dto.toDomain()
+            }
             .also { result -> result.onSuccess { cache = it; cacheKey = location } }
     }
 

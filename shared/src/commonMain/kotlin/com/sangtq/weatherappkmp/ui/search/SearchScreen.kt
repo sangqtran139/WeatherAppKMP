@@ -109,10 +109,11 @@ fun SearchScreen(
         // Search bar
         Row(
             modifier = Modifier
+                .padding(top = 20.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
-                .padding(end = 12.dp, top = 20.dp),
+                .padding(end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {

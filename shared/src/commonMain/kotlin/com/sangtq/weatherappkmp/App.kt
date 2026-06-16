@@ -74,7 +74,7 @@ fun App() {
                 )
                 is Screen.Astronomy -> AstronomyRoute(location = currentLocation, onBackClick = goHome)
                 is Screen.Marine -> MarineRoute(location = currentLocation, onBackClick = goHome)
-                is Screen.Sports -> SportsRoute(onBackClick = goHome)
+                is Screen.Sports -> SportsRoute(location = currentLocation, onBackClick = goHome)
                 is Screen.History -> HistoryRoute(location = currentLocation, onBackClick = goHome)
                 is Screen.Future -> FutureRoute(location = currentLocation, onBackClick = goHome)
             }

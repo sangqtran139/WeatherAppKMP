@@ -13,7 +13,10 @@ class MarineRepositoryImpl(private val apiClient: WeatherApiClient) : MarineRepo
         val key = "$location#$days"
         cache[key]?.let { return Result.success(it) }
         return apiClient.getMarine(location, days)
-            .map { it.toDomain() }
+            .mapCatching { dto ->
+                dto.message?.let { error(it) }
+                dto.toDomain()
+            }
             .also { result -> result.onSuccess { cache[key] = it } }
     }
 }

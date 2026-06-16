@@ -20,12 +20,14 @@ class SportsViewModel(
     private val _selectedCategory = MutableStateFlow(SportCategory.FOOTBALL)
     val selectedCategory: StateFlow<SportCategory> = _selectedCategory
 
-    init { load() }
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query
 
-    fun load() {
+    fun load(query: String) {
+        _query.value = query
         viewModelScope.launch {
             _uiState.value = Resource.Loading
-            getSports().fold(
+            getSports(query).fold(
                 onSuccess = { _uiState.value = Resource.Success(it) },
                 onFailure = { _uiState.value = Resource.Error(it.message ?: "Unknown Error") }
             )

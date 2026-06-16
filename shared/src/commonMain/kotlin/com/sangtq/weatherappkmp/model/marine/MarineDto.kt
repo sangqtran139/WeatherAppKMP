@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MarineResponseDto(
+    val message: String? = null,
     val location: Location? = null,
     val forecast: MarineForecastContainer? = null
 )
